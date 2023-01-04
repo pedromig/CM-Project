@@ -16,17 +16,12 @@
         android:orientation="horizontal"
         android:layout_margin="5dp">
 
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
 
-
-        <ImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_baseline_fastfood_24" />
 
         <TextView
             android:id="@+id/item_name"
@@ -36,24 +31,12 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/profile_picture"
+            android:layout_toEndOf="@id/checkbox"
+            android:layout_centerVertical="true"
             android:text="@string/item_name"
             android:textSize="18sp"
-            android:padding="2dp"/>
+            android:padding="2dp" />
 
-        <ImageButton
-            android:id="@+id/edit_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/white"
-            android:contentDescription="@string/edithome"
-            android:src="@drawable/ic_baseline_edit_24" />
 
         <TextView
             android:id="@+id/quantity"
@@ -65,8 +48,7 @@
             android:padding="2dp"
             android:text="@string/quantity"
             android:textColor="@color/black"
-            android:textSize="15sp"
-            android:layout_below="@+id/edit_btn"/>
+            android:textSize="15sp" />
 
         <RelativeLayout
             android:layout_width="60dp"

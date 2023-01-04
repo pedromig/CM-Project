@@ -85,6 +85,9 @@ public class ItemsFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.item_bar_menu, menu);
 
+        //Setup ShoppingList Button to Change to Shopping List Fragment
+        MenuItem shoppinglist = menu.findItem(R.id.action_shopping_list);
+
         // Setup Filter Button Properties
         MenuItem search = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) search.getActionView();

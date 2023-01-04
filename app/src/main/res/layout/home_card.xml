@@ -27,5 +27,43 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:padding="2dp"/>
+
+        //Achei mais intuitivo ter um botão para editar do que long press apenas
+        <ImageButton
+            android:id="@+id/edit_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_baseline_edit_24"
+            android:contentDescription="@string/edithome"
+            android:background="@color/white"/>
+
+        <TextView
+            android:id="@+id/home_stock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/home_stock"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:padding="2dp"
+            android:layout_below="@+id/home_name"/>
+
+        <TextView
+            android:id="@+id/shopping_stock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/shopping_stock"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:padding="2dp"
+            android:layout_below="@id/home_stock"/>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

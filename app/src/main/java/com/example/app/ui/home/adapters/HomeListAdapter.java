@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.example.app.R;
 import com.example.app.ui.home.fragments.HomeFragmentDirections;
 import com.example.app.ui.home.models.Home;
 import com.example.app.ui.home.models.Item;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHolder> {
     private final NavController navController;
     private ArrayList<Home> residences;
+    private ImageButton editbtn;
 
     public HomeListAdapter(ArrayList<Home> residences, NavController navController) {
         this.residences = residences;
@@ -44,7 +47,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Home model = residences.get(position);
         holder.getName().setText(model.getName());
 
@@ -58,6 +61,14 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
             navController.navigate(action);
             return true;
         });
+        this.editbtn = holder.getView().findViewById(R.id.edit_btn);
+        editbtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                NavDirections action = HomeFragmentDirections.actionNavigationHomeToHomeEditFragment();
+                navController.navigate(action);
+            }
+        });
+
     }
 
     @Override

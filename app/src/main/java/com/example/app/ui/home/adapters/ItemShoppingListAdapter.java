@@ -1,51 +1,41 @@
 package com.example.app.ui.home.adapters;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.ui.home.fragments.HomeFragmentDirections;
-import com.example.app.ui.home.models.Home;
 import com.example.app.ui.home.models.Item;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
+public class ItemShoppingListAdapter extends RecyclerView.Adapter<ItemShoppingListAdapter.ViewHolder>{
 
     private final ArrayList<Item> items;
     private Button lessbtn;
     private Button morebtn;
     private Button editbtn;
     private TextView quantitytxt;
-    private NavController navController;
+    private Integer quantity;
 
-    public ItemListAdapter(ArrayList<Item> items) {
-        this.items = items;
-    }
+    public ItemShoppingListAdapter(ArrayList<Item> items) {this.items = items;}
 
     @NonNull
     @Override
-    public ItemListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ItemShoppingListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_card, parent, false);
-        return new ViewHolder(view);
+                .inflate(R.layout.shopping_item_card, parent, false);
+        return new ItemShoppingListAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+    public void onBindViewHolder(@NonNull ItemShoppingListAdapter.ViewHolder holder, int position) {
         Item model = items.get(position);
         holder.getName().setText(model.getName());
         holder.getView().setOnClickListener(v -> {
@@ -76,6 +66,10 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         return items.size();
     }
 
+    public ItemShoppingListAdapter(@NonNull View view, ArrayList<Item> items, ArrayList<Item> items1) {
+        this.items = items1;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
 
@@ -92,5 +86,4 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             return this.itemView;
         }
     }
-
 }
