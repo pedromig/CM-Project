@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView homeRecyclerView;
     private HomeListAdapter homeListAdapter;
+    private FloatingActionButton floatingActionButton;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
