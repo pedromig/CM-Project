@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_camera"
-        android:hint="@string/camera"
+        android:hint="Camera"
         android:icon="@drawable/ic_baseline_camera_alt_24"
-        android:title="@string/camera"
+        android:title="Camera"
         app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/action_gallery"
         android:hint="@string/shopping_list"
         android:icon="@drawable/ic_baseline_image_24"
-        android:title="@string/gallery"
+        android:title="Gallery"
         app:showAsAction="ifRoom|collapseActionView" />
 </menu>
