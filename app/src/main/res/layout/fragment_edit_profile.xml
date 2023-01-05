@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.profile.EditProfileFragment">
+
 
     <ImageView
         android:id="@+id/profilePicture"
@@ -20,51 +21,71 @@
         app:layout_constraintTop_toTopOf="parent"
         android:scaleType="centerCrop"/>
 
-    <TextView
-        android:id="@+id/nameDisplay"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/editProfilePictureBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_add_a_photo_24"
+        app:layout_constraintEnd_toEndOf="@+id/profilePicture"
+        app:layout_constraintBottom_toBottomOf="@+id/profilePicture"/>
+
+    <EditText
+        android:id="@+id/nameChangeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="40dp"
+        android:paddingBottom="15dp"
         android:text="@string/name"
         android:textSize="30sp"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
 
-    <TextView
-        android:id="@+id/emailDisplay"
+    <EditText
+        android:id="@+id/emailChangeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:paddingBottom="15dp"
         android:text="@string/prompt_email"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@+id/nameDisplay"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/nameChangeEditText"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <ImageButton
-        android:id="@+id/editBtn"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordChangeEditText"
+        android:layout_width="match_parent"
+        app:passwordToggleEnabled="true"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
         android:background="@color/transparent"
-        android:layout_margin="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@+id/emailChangeEditText">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/transparent"
+            android:inputType="textPassword"
+            android:hint="@string/prompt_password"
+            android:textAlignment="center"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
-        android:id="@+id/logout_button"
+        android:id="@+id/saveBtn"
         android:layout_width="182dp"
         android:layout_height="48dp"
-        android:text="@string/logout"
+        android:text="@string/save"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailDisplay" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordChangeEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

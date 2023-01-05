@@ -1,7 +1,15 @@
 package com.example.app.ui.home.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -11,12 +19,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.example.app.R;
@@ -24,6 +36,7 @@ import com.example.app.model.Item;
 import com.example.app.ui.home.models.ItemViewModel;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,6 +48,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import kotlinx.coroutines.ObsoleteCoroutinesApi;
+
 public class ItemEditFragment extends Fragment {
 
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -43,12 +58,16 @@ public class ItemEditFragment extends Fragment {
     private Item item;
     private String homeKey;
 
+    private ImageView itemImage;
+
     private EditText itemName;
     private EditText itemPrice;
     private EditText itemQuantity;
 
     private ImageButton moreButton;
     private ImageButton lessButton;
+
+    private FloatingActionButton changeItemImage;
 
     private Button saveButton;
 
@@ -114,6 +133,41 @@ public class ItemEditFragment extends Fragment {
         }
 
         this.datePicker = materialDateBuilder.build();
+
+        //Set up change item image
+
+        this.itemImage = view.findViewById(R.id.item_image);
+        this.changeItemImage = view.findViewById(R.id.edit_item_image_btn);
+
+        changeItemImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick (View view){
+                    PopupMenu popupMenu = new PopupMenu(getContext(), changeItemImage);
+                    popupMenu.getMenuInflater().inflate(R.menu.photo_edit_menu, popupMenu.getMenu());
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                        if (item.getItemId() == R.id.action_camera) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            ImagePickerCamera.launch(intent);
+                        }
+                        if (item.getItemId() == R.id.action_gallery) {
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            ImagePickerGallery.launch(intent);
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
+
+
         return view;
     }
 
@@ -210,5 +264,30 @@ public class ItemEditFragment extends Fragment {
         });
         super.onViewCreated(view, savedInstanceState);
     }
+
+    ActivityResultLauncher<Intent> ImagePickerCamera = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Bundle bundle = result.getData().getExtras();
+                        Bitmap bitmap = (Bitmap) bundle.get("data");
+                        itemImage.setImageBitmap(bitmap);
+                    }
+                }
+            });
+
+    ActivityResultLauncher<Intent> ImagePickerGallery = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        itemImage.setImageURI(uri);
+                    }
+                }
+            });
 }
 
