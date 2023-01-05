@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_camera"
+        android:hint="@string/camera"
+        android:icon="@drawable/ic_baseline_camera_alt_24"
+        android:title="@string/camera"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_gallery"
+        android:hint="@string/shopping_list"
+        android:icon="@drawable/ic_baseline_image_24"
+        android:title="@string/gallery"
+        app:showAsAction="ifRoom|collapseActionView" />
+</menu>

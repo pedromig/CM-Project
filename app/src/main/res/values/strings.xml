@@ -66,4 +66,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="already_have_an_account_log_in">Already have an account? Log In!</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+
 </resources>
