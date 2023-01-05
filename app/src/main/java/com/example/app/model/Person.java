@@ -7,6 +7,8 @@ public class Person {
 
     private String key;
 
+    private String name;
+
     private String email;
 
     private ArrayList<String> shoppingList;
@@ -19,6 +21,14 @@ public class Person {
         this.email = email;
         this.shoppingList = new ArrayList<>();
         this.debts = new HashMap<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getKey() {

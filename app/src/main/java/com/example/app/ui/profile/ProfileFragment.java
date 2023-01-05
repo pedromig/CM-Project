@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +15,10 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 ;import com.example.app.R;
-import com.example.app.databinding.FragmentProfileBinding;
-import com.example.app.ui.auth.LoginFragmentDirections;
+import com.example.app.ui.home.models.HomeViewModel;
+import com.example.app.ui.home.models.ItemViewModel;
+import com.example.app.ui.home.models.PersonViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class ProfileFragment extends Fragment {
     private Button button;
@@ -29,9 +28,6 @@ public class ProfileFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        ProfileViewModel profileViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
 
         this.auth = FirebaseAuth.getInstance();
         this.button = view.findViewById(R.id.logout_button);
@@ -46,6 +42,12 @@ public class ProfileFragment extends Fragment {
             this.auth.signOut();
             this.auth.getCurrentUser();
 
+            // Flush Data View Model Data
+            HomeViewModel hvm = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+            ItemViewModel ivm = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+            hvm.getMembers().clear();
+            hvm.getResidences().clear();
+            ivm.getItems().clear();
 
             // Navigate to login fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

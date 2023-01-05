@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +36,7 @@ public class HomeEditFragment extends Fragment {
 
     private HomeViewModel viewModel;
     private Home home;
+    private int selectedHome;
 
     private Button saveButton;
     private Button deleteButton;
@@ -53,7 +57,8 @@ public class HomeEditFragment extends Fragment {
         // Fetch arguments passed to the fragment
         Bundle bundle = this.getArguments();
         assert bundle != null;
-        this.home = viewModel.getResidences().get(bundle.getInt("selectedHome"));
+        this.selectedHome = bundle.getInt("selectedHome");
+        this.home = viewModel.getResidences().get(this.selectedHome);
 
         // Setup Action Bar
         setHasOptionsMenu(true);
@@ -121,8 +126,10 @@ public class HomeEditFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_add_person) {
-
+        if (item.getItemId() == R.id.action_home_people) {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            NavDirections action = HomeEditFragmentDirections.actionHomeEditFragmentToHomeAddPeopleFragment(this.selectedHome);
+            navController.navigate(action);
         }
         return true;
     }

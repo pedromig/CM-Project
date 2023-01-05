@@ -1,19 +1,20 @@
-package com.example.app.ui.profile;
+package com.example.app.ui.home.models;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class ProfileViewModel extends ViewModel {
+import com.example.app.model.Person;
 
-    private final MutableLiveData<String> mText;
+import java.util.ArrayList;
 
-    public ProfileViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is profile fragment");
+public class PersonViewModel extends ViewModel {
+    private final ArrayList<Person> people = new ArrayList<>();
+
+    public ArrayList<Person> getPeople() {
+        return this.people;
     }
-
-    public LiveData<String> getText() {
-        return mText;
+    public void addPerson(Person person) {
+        this.people.add(person);
     }
 }

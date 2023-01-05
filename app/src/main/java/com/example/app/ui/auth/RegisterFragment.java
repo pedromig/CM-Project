@@ -123,11 +123,10 @@ public class RegisterFragment extends Fragment {
         this.auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        String userId = auth.getCurrentUser().getUid();
                         // Create Profile
                         Person person = new Person(email);
-                        DatabaseReference ref = db.getReference("profiles").push();
-                        person.setKey(ref.getKey());
-                        ref.setValue(person);
+                        db.getReference("profiles").child(userId).setValue(person);
 
                         // Navigate Back
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

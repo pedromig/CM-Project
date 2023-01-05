@@ -7,7 +7,7 @@
     tools:context=".ui.home.fragments.HomeFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_home"
+        android:id="@+id/add_person"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.952" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/home_list"
+        android:id="@+id/people_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize"

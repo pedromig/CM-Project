@@ -84,6 +84,9 @@
         <action
             android:id="@+id/action_homeEditFragment_to_dialogDeleteHome"
             app:destination="@id/dialogDeleteHome" />
+        <action
+            android:id="@+id/action_homeEditFragment_to_homeAddPeopleFragment"
+            app:destination="@id/homeAddPeopleFragment" />
     </fragment>
 
     <dialog
@@ -143,5 +146,13 @@
         <action
             android:id="@+id/action_register_fragment_to_login_fragment"
             app:destination="@id/login_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeAddPeopleFragment"
+        android:name="com.example.app.ui.home.fragments.HomeAddPeopleFragment"
+        android:label="HomeAddPeopleFragment" >
+        <argument
+            android:name="selectedHome"
+            app:argType="integer" />
     </fragment>
 </navigation>

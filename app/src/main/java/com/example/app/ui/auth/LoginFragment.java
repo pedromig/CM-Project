@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavAction;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 import com.example.app.MainActivity;
 import com.example.app.R;
+import com.example.app.model.Person;
+import com.example.app.ui.home.models.PersonViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -34,14 +37,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class LoginFragment extends Fragment {
-    // Firebase Auth
     private FirebaseAuth auth;
+
+    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private PersonViewModel viewModel;
 
     private ImageView loginImage;
 

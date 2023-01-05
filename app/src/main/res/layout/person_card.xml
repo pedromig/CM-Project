@@ -39,12 +39,12 @@
             android:padding="2dp"/>
 
         <TextView
-            android:id="@+id/person_phone_number"
+            android:id="@+id/person_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/phone_number"
+            android:text="@string/email"
             android:textColor="#5E5E5E"
             android:textSize="14sp"
             android:textStyle="normal"
@@ -63,7 +63,7 @@
             android:textSize="14sp"
             android:textStyle="normal"
             android:layout_toEndOf="@+id/profile_picture"
-            android:layout_below="@id/person_phone_number"
+            android:layout_below="@id/person_email"
             android:paddingRight="10dp" />
 
 

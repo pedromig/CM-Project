@@ -27,7 +27,7 @@
     <string name="add_home_image">Add Home Image</string>
     <string name="location">Location</string>
     <string name="name">Name</string>
-    <string name="residence_name">Residence Name</string>
+    <string name="residence_name">Add Residence</string>
     <string name="home">Home</string>
     <string name="item_name">Item</string>
     <string name="search_item">Search Item</string>
@@ -66,4 +66,5 @@
     <string name="sign_up">Sign Up</string>
     <string name="already_have_an_account_log_in">Already have an account? Log In!</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="resident_email">Add Resident</string>
 </resources>

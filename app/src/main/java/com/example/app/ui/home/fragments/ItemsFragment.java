@@ -61,7 +61,9 @@ public class ItemsFragment extends Fragment {
 
         // Setup View Model
         this.viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-        this.viewModel.getItems().clear();
+        if (this.viewModel.getItems() != null) {
+            this.viewModel.getItems().clear();
+        }
 
         // Setup Action Bar
         setHasOptionsMenu(true);

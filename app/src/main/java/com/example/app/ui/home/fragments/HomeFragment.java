@@ -32,6 +32,8 @@ import com.example.app.ui.home.adapters.HomeListAdapter;
 import com.example.app.ui.home.dialogs.DialogAddHome;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +46,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class HomeFragment extends Fragment {
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     private HomeViewModel viewModel;
@@ -77,7 +80,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
                 Home home = snapshot.getValue(Home.class);
-                if (home != null) {
+                if (home != null && home.getMembers().contains(auth.getCurrentUser().getUid())) {
                     for (Home h : viewModel.getResidences()) {
                         if (h.getKey().equals(home.getKey())){
                             return;
@@ -94,9 +97,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, String s) {
-                System.out.println("Changed");
                 Home home = snapshot.getValue(Home.class);
-                if (home != null) {
+                if (home != null && home.getMembers().contains(auth.getCurrentUser().getUid())) {
                     for (int i = 0; i < viewModel.getResidences().size(); ++i) {
                         Home h = viewModel.getResidences().get(i);
                         if (h.getKey().equals(snapshot.getKey())) {
