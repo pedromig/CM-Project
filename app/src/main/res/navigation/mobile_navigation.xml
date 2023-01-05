@@ -3,54 +3,138 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_dashboard">
+    app:startDestination="@id/login_fragment">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.app.ui.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.app.ui.home.fragments.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_navigation_home_to_itemsFragment"
             app:destination="@id/itemsFragment" />
         <action
             android:id="@+id/action_navigation_home_to_homeEditFragment"
             app:destination="@id/homeEditFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_dialogAddHome"
+            app:destination="@id/dialogAddHome" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
     </fragment>
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.app.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.app.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+        <action
+            android:id="@+id/action_navigation_profile_to_login_fragment"
+            app:destination="@id/login_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/itemsFragment"
         android:name="com.example.app.ui.home.fragments.ItemsFragment"
         android:label="@string/title_items"
-        tools:layout="@layout/fragment_items" >
+        tools:layout="@layout/fragment_items">
         <action
             android:id="@+id/action_itemsFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <argument
+            android:name="selectedItem"
+            app:argType="integer" />
         <action
-            android:id="@+id/action_itemsFragment_to_itemAddFragment"
-            app:destination="@id/itemAddFragment" />
+            android:id="@+id/action_itemsFragment_to_itemEditFragment"
+            app:destination="@id/itemEditFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/homeEditFragment"
         android:name="com.example.app.ui.home.fragments.HomeEditFragment"
-        android:label="HomeEditFragment" >
+        android:label="@string/edit_home"
+        tools:layout="@layout/fragment_edit_home"
+        >
         <action
             android:id="@+id/action_homeEditFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <argument
+            android:name="selectedHome"
+            app:argType="integer"
+            />
+        <action
+            android:id="@+id/action_homeEditFragment_to_dialogDeleteHome"
+            app:destination="@id/dialogDeleteHome" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/dialogDeleteHome"
+        android:name="com.example.app.ui.home.dialogs.DialogDeleteHome"
+        android:label="DialogDeleteHome">
+        <action
+            android:id="@+id/action_dialogDeleteHome_to_homeEditFragment"
+            app:destination="@id/homeEditFragment" />
+        <action
+            android:id="@+id/action_dialogDeleteHome_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+    <dialog
+        android:id="@+id/dialogAddHome"
+        android:name="com.example.app.ui.home.dialogs.DialogAddHome"
+        android:label="DialogAddHome"
+        tools:layout="@layout/fragment_add_home_dialog">
+        <action
+            android:id="@+id/action_dialogAddHome_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/itemEditFragment"
+        android:name="com.example.app.ui.home.fragments.ItemEditFragment"
+        android:label="ItemAddFragment"
+        tools:layout="@layout/fragment_edit_item"
+        >
+        <argument
+            android:name="selectedItem"
+            app:argType="integer" />
+        <argument android:name="selectedHome"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.example.app.ui.auth.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_fragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+        <action
+            android:id="@+id/action_login_fragment_to_registerFragment"
+            app:destination="@id/register_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/itemAddFragment"
-        android:name="com.example.app.ui.home.fragments.ItemAddFragment"
-        android:label="ItemAddFragment" />
+        android:id="@+id/register_fragment"
+        android:name="com.example.app.ui.auth.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" />
 </navigation>

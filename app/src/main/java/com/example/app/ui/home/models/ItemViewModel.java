@@ -2,6 +2,8 @@ package com.example.app.ui.home.models;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.app.model.Item;
+
 import java.util.ArrayList;
 
 public class ItemViewModel extends ViewModel {

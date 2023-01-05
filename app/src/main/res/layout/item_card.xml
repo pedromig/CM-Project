@@ -16,8 +16,6 @@
         android:orientation="horizontal"
         android:layout_margin="5dp">
 
-
-
         <ImageView
             android:id="@+id/profile_picture"
             android:layout_width="60dp"
@@ -43,19 +41,19 @@
 
         <ImageButton
             android:id="@+id/edit_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="18dp"
             android:layout_marginBottom="5dp"
             android:background="@color/white"
             android:contentDescription="@string/edithome"
             android:src="@drawable/ic_baseline_edit_24" />
 
-        <TextView
+        <!-- <TextView
             android:id="@+id/quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,32 +64,14 @@
             android:text="@string/quantity"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:layout_below="@+id/edit_btn"/>
+            android:layout_below="@+id/edit_btn"/>-->
 
-        <RelativeLayout
+        <!-- <RelativeLayout
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/quantity"
             android:background="@drawable/box"
             android:layout_alignParentEnd="true">
-        <ImageButton
-            android:id="@+id/more_btn"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:layout_marginEnd="5dp"
-            android:src="@drawable/ic_baseline_more"
-
-            android:layout_alignParentEnd="true"/>
-        <ImageButton
-            android:id="@+id/less_btn"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:background="@color/transparent"
-            android:src="@drawable/ic_baseline_less"
-            android:layout_below="@+id/more_btn"
-            android:layout_alignParentEnd="true"/>
 
             <TextView
                 android:id="@+id/quantityValue"
@@ -99,14 +79,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="5dp"
-                android:layout_toStartOf="@+id/more_btn"
                 android:background="@color/transparent"
                 android:gravity="center"
                 android:padding="10dp"
                 android:text="1"
                 android:textColor="@color/black"
                 android:textSize="19sp" />
-        </RelativeLayout>
+        </RelativeLayout>-->
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

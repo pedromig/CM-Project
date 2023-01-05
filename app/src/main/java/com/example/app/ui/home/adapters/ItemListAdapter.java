@@ -7,33 +7,66 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
-import com.example.app.ui.home.fragments.HomeFragmentDirections;
-import com.example.app.ui.home.models.Home;
-import com.example.app.ui.home.models.Item;
+import com.example.app.model.Home;
+import com.example.app.model.Item;
+import com.example.app.ui.home.fragments.ItemsFragment;
+import com.example.app.ui.home.fragments.ItemsFragmentDirections;
 
+import java.sql.Array;
 import java.util.ArrayList;
-import java.util.List;
 
-public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
+public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> implements Filterable {
+    private Home home;
+    private ArrayList<Item> items;
+    private ArrayList<Item> itemsFull;
+    private final NavController navController;
 
-    private final ArrayList<Item> items;
-    private Button lessbtn;
-    private Button morebtn;
-    private Button editbtn;
-    private TextView quantitytxt;
-    private NavController navController;
-
-    public ItemListAdapter(ArrayList<Item> items) {
+    public ItemListAdapter(ArrayList<Item> items, Home home, NavController navController) {
         this.items = items;
+        this.home = home;
+        this.itemsFull = new ArrayList<>(items);
+        this.navController = navController;
+    }
+
+    private final Filter filter = new Filter() {
+        @Override
+        protected Filter.FilterResults performFiltering(CharSequence constraint) {
+            Filter.FilterResults results = new Filter.FilterResults();
+            ArrayList<Item> filtered = new ArrayList<>();
+            if (constraint == null || constraint.length() <= 0) {
+                filtered.addAll(itemsFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (Item item : itemsFull) {
+                    if (item.getName().toLowerCase().contains(filterPattern.toLowerCase())) {
+                        filtered.add(item);
+                    }
+                }
+            }
+            results.values = filtered;
+            return results;
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        protected void publishResults(CharSequence constraint, Filter.FilterResults results) {
+            items = (ArrayList<Item>) results.values;
+            notifyDataSetChanged();
+        }
+    };
+
+
+    public void update() {
+        this.itemsFull = new ArrayList<>(items);
     }
 
     @NonNull
@@ -48,26 +81,17 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item model = items.get(position);
         holder.getName().setText(model.getName());
+        holder.getName().setText(model.getName());
+
+        // Card General Listeners
         holder.getView().setOnClickListener(v -> {
+            NavDirections action = ItemsFragmentDirections.actionItemsFragmentToItemEditFragment(position, home.getKey());
+            navController.navigate(action);
         });
 
-        this.lessbtn = holder.getView().findViewById(R.id.less_btn);
-        this.morebtn = holder.getView().findViewById(R.id.more_btn);
-        this.editbtn = holder.getView().findViewById(R.id.edit_btn);
-        this.quantitytxt = holder.getView().findViewById(R.id.quantityValue);
+        holder.getView().setOnLongClickListener(v -> true);
 
-        morebtn.setOnClickListener(v -> {
-            String value= quantitytxt.getText().toString();
-            Integer quantity=Integer.parseInt(value);
-            quantity++;
-            quantitytxt.setText(quantity.toString());
-        });
-        lessbtn.setOnClickListener(v -> {
-            String value= quantitytxt.getText().toString();
-            Integer quantity=Integer.parseInt(value);
-            if (quantity >1)
-                quantity--;
-            quantitytxt.setText(quantity.toString());
+        holder.getEditBtn().setOnClickListener(v -> {
         });
     }
 
@@ -76,21 +100,31 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         return items.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return null;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
+        private final ImageButton editBtn;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             this.name = view.findViewById(R.id.item_name);
+            this.editBtn = view.findViewById(R.id.edit_btn);
         }
 
         public TextView getName() {
             return name;
         }
 
+        public ImageButton getEditBtn() {
+            return editBtn;
+        }
+
         public View getView() {
             return this.itemView;
         }
     }
-
 }

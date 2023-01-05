@@ -1,6 +1,7 @@
 package com.example.app.ui.home.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,43 +27,115 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.MainActivity;
 import com.example.app.R;
+import com.example.app.model.Home;
 import com.example.app.ui.home.adapters.HomeListAdapter;
 import com.example.app.ui.home.dialogs.DialogAddHome;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 
 public class HomeFragment extends Fragment {
+
+    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+
     private HomeViewModel viewModel;
 
     private RecyclerView homeRecyclerView;
-    private HomeListAdapter homeListAdapter;
-    private FloatingActionButton floatingActionButton;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // Inflate view
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         // Setup Action Bar
         setHasOptionsMenu(true);
 
-        // Fetch ViewModel and Build Adapter
-        this.viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
-        // RecyclerView Adapter
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-        this.homeListAdapter = new HomeListAdapter(this.viewModel.getResidences(), navController);
+        // Setup View Model
+        this.viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         // Recycler View Settings
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+        HomeListAdapter homeListAdapter = new HomeListAdapter(viewModel.getResidences(), navController);
         this.homeRecyclerView = view.findViewById(R.id.home_list);
-        this.homeRecyclerView.setAdapter(this.homeListAdapter);
+        this.homeRecyclerView.setAdapter(homeListAdapter);
+        this.setupRecyclerViewFirebaseListeners();
 
         return view;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    private void setupRecyclerViewFirebaseListeners() {
+        // Setup Firebase Actions on Incoming Changes
+        db.getReference("homes").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                Home home = snapshot.getValue(Home.class);
+                if (home != null) {
+                    for (Home h : viewModel.getResidences()) {
+                        if (h.getKey().equals(home.getKey())){
+                            return;
+                        }
+                    }
+                    home.setKey(snapshot.getKey());
+                    viewModel.addResidence(snapshot.getValue(Home.class));
+                    HomeListAdapter adapter = (HomeListAdapter) homeRecyclerView.getAdapter();
+                    assert adapter != null;
+                    adapter.update();
+                    adapter.notifyItemInserted(viewModel.getResidences().size() - 1);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, String s) {
+                System.out.println("Changed");
+                Home home = snapshot.getValue(Home.class);
+                if (home != null) {
+                    for (int i = 0; i < viewModel.getResidences().size(); ++i) {
+                        Home h = viewModel.getResidences().get(i);
+                        if (h.getKey().equals(snapshot.getKey())) {
+                            viewModel.getResidences().set(i, home);
+
+                            HomeListAdapter adapter = (HomeListAdapter) homeRecyclerView.getAdapter();
+                            assert adapter != null;
+                            adapter.update();
+                            adapter.notifyItemChanged(i);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                for (int i = 0; i < viewModel.getResidences().size(); ++i) {
+                    Home h = viewModel.getResidences().get(i);
+                    if (h.getKey().equals(snapshot.getKey())) {
+                        viewModel.getResidences().remove(i);
+                        HomeListAdapter adapter = (HomeListAdapter) homeRecyclerView.getAdapter();
+                        assert adapter != null;
+                        adapter.update();
+                        adapter.notifyItemRemoved(i);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -81,7 +155,21 @@ public class HomeFragment extends Fragment {
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         // Setup Filter Button Listener
-        // searchView.setOnQueryTextListener(new ResidencesFilterListener((HomeListAdapter) this.homeRecyclerView.getAdapter()));
+        HomeListAdapter adapter = (HomeListAdapter) homeRecyclerView.getAdapter();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                System.out.println(newText);
+                assert adapter != null;
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -89,11 +177,10 @@ public class HomeFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_home) {
-            DialogAddHome fragment = new DialogAddHome(viewModel);
-            this.homeListAdapter.updateResidences(this.viewModel.getResidences());
+            DialogAddHome fragment = new DialogAddHome();
             fragment.show(getChildFragmentManager(), "AddHomeDialog");
-            Objects.requireNonNull(homeRecyclerView.getAdapter()).notifyDataSetChanged();
         }
         return true;
     }
+
 }

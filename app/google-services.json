@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "868778289112",
+    "firebase_url": "https://cm-project-b855f-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "cm-project-b855f",
     "storage_bucket": "cm-project-b855f.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "868778289112-na3n274pgvqvpeqrengvlbnfmb2l2pbf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app",
+            "certificate_hash": "becc620877784c17cc7edf36c31538a0182fa945"
+          }
+        },
         {
           "client_id": "868778289112-rob7gbl0conpudb2ddttaau2q294kcp3.apps.googleusercontent.com",
           "client_type": 3

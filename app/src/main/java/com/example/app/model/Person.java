@@ -1,10 +1,11 @@
-package com.example.app.ui.home.models;
+package com.example.app.model;
 
 public class Person {
-
     private String picture;
     private String name;
     private String phoneNumber;
+
+    public Person() {}
 
     public Person(String picture, String name, String phoneNumber) {
         this.picture = picture;
