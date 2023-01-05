@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_new_item"
+        android:id="@+id/action_add_person"
         android:icon="@drawable/ic_baseline_person_add_24"
         android:title="@string/new_item"
         app:showAsAction="ifRoom" />

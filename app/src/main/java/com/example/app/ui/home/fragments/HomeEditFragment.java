@@ -6,12 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,15 +20,12 @@ import android.widget.Toast;
 
 import com.example.app.R;
 import com.example.app.model.Home;
-import com.example.app.model.Person;
 import com.example.app.ui.home.dialogs.DialogDeleteHome;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class HomeEditFragment extends Fragment {
 
@@ -55,9 +51,9 @@ public class HomeEditFragment extends Fragment {
         this.viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         // Fetch arguments passed to the fragment
-        // Bundle bundle = this.getArguments();
-        // assert bundle != null;
-        // this.home = viewModel.getResidences().get(bundle.getInt("selectedHome"));
+        Bundle bundle = this.getArguments();
+        assert bundle != null;
+        this.home = viewModel.getResidences().get(bundle.getInt("selectedHome"));
 
         // Setup Action Bar
         setHasOptionsMenu(true);
@@ -121,5 +117,13 @@ public class HomeEditFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.edit_home_bar_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add_person) {
+
+        }
+        return true;
     }
 }

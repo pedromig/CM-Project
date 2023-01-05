@@ -1,39 +1,55 @@
 package com.example.app.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Person {
-    private String picture;
-    private String name;
-    private String phoneNumber;
+
+    private String key;
+
+    private String email;
+
+    private ArrayList<String> shoppingList;
+
+    private HashMap<String, Double> debts;
 
     public Person() {}
 
-    public Person(String picture, String name, String phoneNumber) {
-        this.picture = picture;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+    public Person(String email) {
+        this.email = email;
+        this.shoppingList = new ArrayList<>();
+        this.debts = new HashMap<>();
     }
 
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public String getPicture() {
-        return picture;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public ArrayList<String> getShoppingList() {
+        return shoppingList;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setShoppingList(ArrayList<String> shoppingList) {
+        this.shoppingList = shoppingList;
+    }
+
+    public void setDebts(HashMap<String, Double> debts) {
+        this.debts = debts;
+    }
+
+    public HashMap<String, Double> getDebts() {
+        return debts;
     }
 }

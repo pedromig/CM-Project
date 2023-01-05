@@ -1,10 +1,13 @@
 package com.example.app.model;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Item {
-
     public static final int NEW_ITEM = -1;
 
     private String key;
@@ -13,42 +16,33 @@ public class Item {
 
     private String name;
 
-    private String price;
+    private double price;
 
-    private Date expirationDate;
+    private String expirationDate;
 
     private int quantity;
 
-    private Home home;
+    private String homeKey;
 
-    private ArrayList<Person> owners;
+    private ArrayList<String> owners;
 
     public Item() {}
 
-    public Item(Home home, String name, String price, int quantity, Date expirationDate) {
+    public Item(String homeKey, String name, double price, int quantity, String expirationDate) {
         this.name = name;
-        this.home = home;
+        this.homeKey = homeKey;
         this.price = price;
         this.quantity = quantity;
         this.expirationDate = expirationDate;
-        this.owners = new ArrayList<>();
-        this.owners.add(new Person(null, "Pedro", "924109520"));
+        this.owners = new ArrayList<>(List.of(FirebaseAuth.getInstance().getCurrentUser().getUid()));
     }
 
-    public ArrayList<Person> getOwners() {
-        return owners;
+    public String getHomeKey() {
+        return homeKey;
     }
 
-    public void setOwners(ArrayList<Person> owners) {
-        this.owners = owners;
-    }
-
-    public Home getHome() {
-        return home;
-    }
-
-    public void setHome(Home home) {
-        this.home = home;
+    public void setHomeKey(String homeKey) {
+        this.homeKey = homeKey;
     }
 
     public String getKey() {
@@ -59,11 +53,11 @@ public class Item {
         this.key = key;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
@@ -75,7 +69,7 @@ public class Item {
         return image;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -83,12 +77,16 @@ public class Item {
         this.image = image;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public ArrayList<String> getOwners() {
+        return owners;
     }
 
     public String getName() {

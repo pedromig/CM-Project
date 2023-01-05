@@ -5,14 +5,16 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @IgnoreExtraProperties
 public class Home {
-
     private String key;
 
     private String name;
@@ -21,16 +23,15 @@ public class Home {
 
     private String location;
 
-    private ArrayList<Person> members;
+    private ArrayList<String> members;
 
     public Home() {}
 
     public Home(String name) {
         this.picture = null;
         this.name = name;
-        this.members = new ArrayList<>();
         this.location = "";
-        this.members.add(new Person(null, "Pedro", "924109520"));
+        this.members = new ArrayList<>(List.of(FirebaseAuth.getInstance().getCurrentUser().getUid()));
     }
 
     public Home(String name, String location) {
@@ -62,11 +63,11 @@ public class Home {
         this.key = key;
     }
 
-    public ArrayList<Person> getMembers() {
+    public ArrayList<String> getMembers() {
         return members;
     }
 
-    public void setMembers(ArrayList<Person> members) {
+    public void setMembers(ArrayList<String> members) {
         this.members = members;
     }
 

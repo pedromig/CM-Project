@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
+// TODO: fix bugs on search item
 public class ItemsFragment extends Fragment {
     private ItemViewModel viewModel;
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -59,7 +60,8 @@ public class ItemsFragment extends Fragment {
         this.home = homeViewModel.getResidences().get(bundle.getInt("selectedHome"));
 
         // Setup View Model
-        this.viewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+        this.viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+        this.viewModel.getItems().clear();
 
         // Setup Action Bar
         setHasOptionsMenu(true);
@@ -86,7 +88,7 @@ public class ItemsFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
                 Item item = snapshot.getValue(Item.class);
-                if (item != null && item.getHome().getKey().equals(home.getKey())) {
+                if (item != null && item.getHomeKey().equals(home.getKey())) {
                     for (Item it : viewModel.getItems()) {
                         if (it.getKey().equals(item.getKey())) {
                             return;
@@ -104,7 +106,7 @@ public class ItemsFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, String s) {
                 Item item = snapshot.getValue(Item.class);
-                if (item != null && item.getHome().getKey().equals(home.getKey())) {
+                if (item != null && item.getHomeKey().equals(home.getKey())) {
                     for (int i = 0; i < viewModel.getItems().size(); ++i) {
                         Item it = viewModel.getItems().get(i);
                         if (it.getKey().equals(snapshot.getKey())) {

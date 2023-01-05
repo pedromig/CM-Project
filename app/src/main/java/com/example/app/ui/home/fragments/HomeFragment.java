@@ -44,7 +44,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class HomeFragment extends Fragment {
-
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     private HomeViewModel viewModel;
@@ -173,7 +172,6 @@ public class HomeFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new_home) {

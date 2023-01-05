@@ -61,7 +61,7 @@
             android:id="@+id/action_itemsFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
         <argument
-            android:name="selectedItem"
+            android:name="selectedHome"
             app:argType="integer" />
         <action
             android:id="@+id/action_itemsFragment_to_itemEditFragment"
@@ -118,12 +118,15 @@
             app:argType="integer" />
         <argument android:name="selectedHome"
             app:argType="string" />
+        <action
+            android:id="@+id/action_itemEditFragment_to_itemsFragment"
+            app:destination="@id/itemsFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/login_fragment"
         android:name="com.example.app.ui.auth.LoginFragment"
-        android:label="fragment_login"
+        android:label="Login"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_login_fragment_to_navigation_dashboard"
@@ -135,6 +138,10 @@
     <fragment
         android:id="@+id/register_fragment"
         android:name="com.example.app.ui.auth.RegisterFragment"
-        android:label="fragment_register"
-        tools:layout="@layout/fragment_register" />
+        android:label="Register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_register_fragment_to_login_fragment"
+            app:destination="@id/login_fragment" />
+    </fragment>
 </navigation>

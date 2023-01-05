@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         // Setup Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         this.setSupportActionBar(toolbar);
-        System.out.println(toolbar);
 
         // Setup App Bar
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
