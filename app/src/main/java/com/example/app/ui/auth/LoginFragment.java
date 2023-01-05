@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,47 +38,10 @@ public class LoginFragment extends Fragment {
 
     // Firebase Auth
     private FirebaseAuth auth;
-    private String verificationId;
-    private PhoneAuthProvider.ForceResendingToken resendToken;
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks authCallbacks;
 
     private static final String TAG = "LoginFragment";
 
     private Button loginButton;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.auth = FirebaseAuth.getInstance();
-        this.auth.getFirebaseAuthSettings().setAppVerificationDisabledForTesting(true);
-        this.auth.getFirebaseAuthSettings().forceRecaptchaFlowForTesting(false);
-
-        this.authCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-                System.out.println("here");
-                // String code = "123456";
-                // verifyPhoneNumberWithCode(verificationId, code);
-                // System.out.println(code);
-                signInWithPhoneAuthCredential(credential);
-            }
-
-            @Override
-            public void onVerificationFailed(@NonNull FirebaseException e) {
-                Log.w(TAG, "Invalid Request or SMS Quota Exceeded", e);
-            }
-
-            @Override
-            public void onCodeSent(@NonNull String verId,
-                                   @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                super.onCodeSent(verId, token);
-                verificationId = verId;
-                resendToken = token;
-                Log.d(TAG, "SMS Code Sent: " + verId);
-            }
-        };
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,65 +51,49 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    private void verifyPhoneNumberWithCode(String verificationId, String code) {
-        PhoneAuthProvider.getCredential(verificationId, code);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        this.loginButton.setOnClickListener(v -> {
+            signIn("pedromiguelrodrigues2000@gmail.com", "123456");
+        });
+        super.onViewCreated(view, savedInstanceState);
     }
 
-    private void startPhoneNumberVerification(String phoneNumber) {
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(this.auth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(60L, TimeUnit.SECONDS)
-                        .setActivity(requireActivity())
-                        .setCallbacks(authCallbacks)
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        this.auth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
     }
 
-
-    // [START resend_verification]
-    private void resendVerificationCode(String phoneNumber,
-                                        PhoneAuthProvider.ForceResendingToken token) {
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(this.auth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(60L, TimeUnit.SECONDS)
-                        .setActivity(requireActivity())
-                        .setCallbacks(authCallbacks)
-                        .setForceResendingToken(token)
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        this.auth.signInWithCredential(credential)
+    private void createAccount(String email, String password) {
+        this.auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "signInWithCredential:success");
-                        FirebaseUser user = task.getResult().getUser();
+                        FirebaseUser user = auth.getCurrentUser();
+                    } else {
+                        Toast.makeText(requireActivity(), "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
+    private void signIn(String email, String password) {
+        this.auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
                         System.out.println(user);
 
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                         NavDirections action = LoginFragmentDirections.actionLoginFragmentToNavigationDashboard();
                         navController.navigate(action);
-
                     } else {
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                            Log.w(TAG, "Invalid Verification Code");
-                        }
+                        Toast.makeText(requireActivity(), "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        String phoneNumber = "+351 924109520";
-
-        this.loginButton.setOnClickListener(v -> {
-            startPhoneNumberVerification(phoneNumber);
-        });
-        super.onViewCreated(view, savedInstanceState);
     }
 }
