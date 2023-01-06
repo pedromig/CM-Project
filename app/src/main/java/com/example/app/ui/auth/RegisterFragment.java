@@ -127,6 +127,7 @@ public class RegisterFragment extends Fragment {
                         // Create Profile
                         Person person = new Person(email);
                         db.getReference("profiles").child(userId).setValue(person);
+                        auth.signOut();
 
                         // Navigate Back
                         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

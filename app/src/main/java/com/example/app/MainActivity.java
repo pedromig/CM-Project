@@ -69,22 +69,19 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.setVisibility(View.VISIBLE);
             }
         });
-        this.setupNavigationListeners(navController, navigationView);
 
         // Add listener for controller back button
         toolbar.setNavigationOnClickListener(v -> navController.popBackStack());
 
         // ActionBar App Bar Settings
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-    }
-
-    private void setupNavigationListeners(NavController controller, BottomNavigationView nav) {
-        nav.setOnItemSelectedListener(item -> {
-            controller.navigate(item.getItemId());
+        NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setOnItemSelectedListener(item -> {
+            navController.navigate(item.getItemId());
             return true;
         });
-        nav.setSelectedItemId(R.id.navigation_dashboard);
     }
+
 
     private void setupFirebaseProfilesListener() {
         // Setup Firebase Actions on Incoming Changes To Profiles
