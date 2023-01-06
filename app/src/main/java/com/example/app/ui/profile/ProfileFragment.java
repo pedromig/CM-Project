@@ -1,5 +1,6 @@
 package com.example.app.ui.profile;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,19 +25,24 @@ import com.example.app.model.Person;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.example.app.ui.home.models.ItemViewModel;
 import com.example.app.ui.home.models.PersonViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     private PersonViewModel viewModel;
-    private ImageView image;
+    private ImageView picture;
     private TextView name;
     private TextView email;
 
@@ -53,7 +59,6 @@ public class ProfileFragment extends Fragment {
         // Setup Action Bar
         setHasOptionsMenu(true);
 
-
         FirebaseUser user = this.auth.getCurrentUser();
 
         this.selectedPerson = 0;
@@ -67,10 +72,10 @@ public class ProfileFragment extends Fragment {
         }
 
         // Setup Elements
-        this.image = view.findViewById(R.id.profile_picture);
         this.name = view.findViewById(R.id.name_text);
         this.email = view.findViewById(R.id.email_text);
         this.button = view.findViewById(R.id.logout_button);
+        this.picture = view.findViewById(R.id.profile_picture);
 
         return view;
     }
@@ -81,6 +86,12 @@ public class ProfileFragment extends Fragment {
 
         this.name.setText(this.user.getName());
         this.email.setText(this.user.getEmail());
+
+        if (this.user.getPicture() != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference ref = storage.getReference().child(this.user.getPicture());
+            ref.getDownloadUrl().addOnCompleteListener(task -> Picasso.get().load(task.getResult().toString()).into(this.picture));
+        }
 
         this.button.setOnClickListener(v -> {
             // Sign Out Current User

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class Person {
 
+    private String picture;
     private String key;
 
     private String name;
@@ -22,6 +23,14 @@ public class Person {
         this.name = "Unkown";
         this.shoppingList = new ArrayList<>();
         this.debts = new HashMap<>();
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getName() {

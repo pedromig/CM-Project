@@ -1,6 +1,7 @@
 package com.example.app.ui.profile;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -36,7 +37,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 
@@ -48,6 +55,7 @@ public class EditProfileFragment extends Fragment {
     private Person user;
 
     private ImageView picture;
+    private Uri imageUri;
 
     private EditText password;
     private EditText email;
@@ -94,6 +102,16 @@ public class EditProfileFragment extends Fragment {
                                 Bundle bundle = result.getData().getExtras();
                                 Bitmap bitmap = (Bitmap) bundle.get("data");
                                 picture.setImageBitmap(bitmap);
+
+                                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                                String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(),
+                                        bitmap, "image", null);
+
+                                imageUri = Uri.parse(path);
+                                // imageUri = result.getData().getData();
+                                System.out.println(imageUri.toString());
+                                picture.setImageURI(imageUri);
                             }
                         }
                     });
@@ -104,8 +122,8 @@ public class EditProfileFragment extends Fragment {
                         @Override
                         public void onActivityResult(ActivityResult result) {
                             if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                                Uri uri = result.getData().getData();
-                                picture.setImageURI(uri);
+                                imageUri = result.getData().getData();
+                                picture.setImageURI(imageUri);
                             }
                         }
                     });
@@ -138,6 +156,12 @@ public class EditProfileFragment extends Fragment {
         this.name.setText(this.user.getName());
         this.email.setText(this.user.getEmail());
 
+        if (this.user.getPicture() != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference ref = storage.getReference().child(this.user.getPicture());
+            ref.getDownloadUrl().addOnCompleteListener(task -> Picasso.get().load(task.getResult().toString()).into(this.picture));
+        }
+
         this.saveButton.setOnClickListener(v -> {
             String name = this.name.getText().toString();
             String email = this.email.getText().toString();
@@ -156,7 +180,8 @@ public class EditProfileFragment extends Fragment {
                 return;
             }
 
-            /* Update Firebase Auth*/FirebaseUser current = this.auth.getCurrentUser();
+            /* Update Firebase Auth*/
+            FirebaseUser current = this.auth.getCurrentUser();
             if (!password.isEmpty()) {
                 if (password.length() < 6) {
                     Toast.makeText(requireActivity(), "Password length must be greater than 6 characters",
@@ -167,6 +192,17 @@ public class EditProfileFragment extends Fragment {
                 return;
             }
 
+            if (this.imageUri != null) {
+                // Save Data Locally
+                String uid = UUID.randomUUID().toString();
+                this.user.setPicture(uid);
+
+                // Save Date Upstream
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference ref = storage.getReference();
+                ref.child(uid).putFile(imageUri);
+            }
+
             // Save Data Locally
             this.user.setName(name);
             this.user.setEmail(email);
@@ -175,6 +211,9 @@ public class EditProfileFragment extends Fragment {
             DatabaseReference ref = this.db.getReference().child("profiles").child(this.user.getKey());
             ref.child("name").setValue(name);
             ref.child("email").setValue(email);
+            if (this.imageUri != null) {
+                ref.child("picture").setValue(this.user.getPicture());
+            }
             assert current != null;
             current.updateEmail(email);
             Toast.makeText(requireActivity(), "Profile updated successfully!",

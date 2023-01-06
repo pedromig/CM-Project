@@ -9,15 +9,15 @@
     android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="238dp"
-        android:layout_height="191dp"
+        android:layout_width="223dp"
+        android:layout_height="175dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/profile_picture"
-            android:layout_width="176dp"
-            android:layout_height="168dp"
+            android:layout_width="147dp"
+            android:layout_height="135dp"
             android:contentDescription="@string/item_image"
             android:scaleType="centerCrop"
             android:src="@drawable/profile"
