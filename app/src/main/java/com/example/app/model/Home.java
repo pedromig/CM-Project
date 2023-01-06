@@ -30,7 +30,7 @@ public class Home {
     public Home(String name) {
         this.picture = null;
         this.name = name;
-        this.location = "";
+        this.location = "Uknown";
         this.members = new ArrayList<>(List.of(FirebaseAuth.getInstance().getCurrentUser().getUid()));
     }
 

@@ -25,22 +25,30 @@ import android.widget.EditText;
 
 import com.example.app.R;
 import com.example.app.model.Home;
+import com.example.app.model.Person;
 import com.example.app.ui.home.adapters.ItemListAdapter;
 import com.example.app.model.Item;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.example.app.ui.home.models.ItemViewModel;
+import com.example.app.ui.home.models.PersonViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 // TODO: fix bugs on search item
 public class ItemsFragment extends Fragment {
     private ItemViewModel viewModel;
+    private HomeViewModel homeViewModel;
+    private PersonViewModel personViewModel;
+
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private ChildEventListener itemsEventListener;
+    private ChildEventListener houseMembersEventListener;
 
     private Home home;
 
@@ -53,11 +61,11 @@ public class ItemsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_items, container, false);
 
-        // Fetch arguments passed to the fragment
-        Bundle bundle = this.getArguments();
-        assert bundle != null;
-        HomeViewModel homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        this.home = homeViewModel.getResidences().get(bundle.getInt("selectedHome"));
+        this.personViewModel = new ViewModelProvider(requireActivity()).get(PersonViewModel.class);
+        this.homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        if (homeViewModel.getMembers() != null) {
+            homeViewModel.getMembers().clear();
+        }
 
         // Setup View Model
         this.viewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -65,18 +73,20 @@ public class ItemsFragment extends Fragment {
             this.viewModel.getItems().clear();
         }
 
+        // Fetch arguments passed to the fragment
+        Bundle bundle = this.getArguments();
+        assert bundle != null;
+        this.home = homeViewModel.getResidences().get(bundle.getInt("selectedHome"));
+
         // Setup Action Bar
         setHasOptionsMenu(true);
-
-        Toolbar toolbar = (Toolbar) requireActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle(home.getName() + " Items");
 
         // Floating Action Button
         this.floatingActionButton = view.findViewById(R.id.add_item);
 
         // Recycler View Settings
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-        ItemListAdapter itemListAdapter = new ItemListAdapter(this.viewModel.getItems(), home, navController);
+        ItemListAdapter itemListAdapter = new ItemListAdapter(this.viewModel.getItems(), home, navController, viewModel);
         this.itemRecyclerView = view.findViewById(R.id.items_list);
         this.itemRecyclerView.setAdapter(itemListAdapter);
         this.setupRecyclerViewFirebaseListeners();
@@ -86,7 +96,7 @@ public class ItemsFragment extends Fragment {
 
     private void setupRecyclerViewFirebaseListeners() {
         // Setup Firebase Actions on Incoming Changes
-        db.getReference("items").addChildEventListener(new ChildEventListener() {
+        this.itemsEventListener = db.getReference("items").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
                 Item item = snapshot.getValue(Item.class);
@@ -146,6 +156,55 @@ public class ItemsFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+
+        this.houseMembersEventListener = db.getReference("homes")
+                .child(this.home.getKey())
+                .child("members")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                        String member = snapshot.getValue(String.class);
+                        for (Person person : personViewModel.getPeople()) {
+                            if (person.getKey().equals(member) && !homeViewModel.getMembers().contains(person)) {
+                                homeViewModel.addMember(person);
+                                return;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                        String member = snapshot.getValue(String.class);
+                        Person person = null;
+                        for (Person p : personViewModel.getPeople()) {
+                            if (p.getKey().equals(member)) {
+                                person = p;
+                            }
+                        }
+                        if (person != null) {
+                            for (int i = 0; i < homeViewModel.getMembers().size(); ++i) {
+                                Person m = homeViewModel.getMembers().get(i);
+                                if (m.getKey().equals(person.getKey())) {
+                                    homeViewModel.getMembers().remove(i);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, String s) {
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
     }
 
     @Override
@@ -186,5 +245,12 @@ public class ItemsFragment extends Fragment {
             }
         });
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.db.getReference().removeEventListener(this.itemsEventListener);
+        this.db.getReference().removeEventListener(this.houseMembersEventListener);
     }
 }

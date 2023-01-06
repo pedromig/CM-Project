@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App</string>
+    <string name="app_name">Fridge Mates</string>
     <string name="title_home">Residences</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_profile">Profile</string>
@@ -26,7 +26,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="add_home_image">Add Home Image</string>
     <string name="location">Location</string>
-    <string name="name">Name</string>
+    <string name="name">User</string>
     <string name="residence_name">Add Residence</string>
     <string name="home">Home</string>
     <string name="item_name">Item</string>
@@ -46,7 +46,7 @@
     <string name="shopping_list">Open shopping list</string>
     <string name="owed">Owed</string>
     <string name="home_stock">You have X items in your house</string>
-    <string name="members">You have X associated members</string>
+    <string name="members">Members</string>
     <string name="edit_home">Edit Home</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -67,4 +67,6 @@
     <string name="already_have_an_account_log_in">Already have an account? Log In!</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="resident_email">Add Resident</string>
+    <string name="location_name">Location</string>
+    <string name="expiration_date">Expiration Date</string>
 </resources>

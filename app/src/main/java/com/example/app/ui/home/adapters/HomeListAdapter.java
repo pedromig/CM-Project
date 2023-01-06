@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.R;
 import com.example.app.ui.home.fragments.HomeFragmentDirections;
 import com.example.app.model.Home;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
         this.residencesFull = new ArrayList<>(residences);
         this.navController = navController;
     }
+
     public void update() {
         this.residencesFull = new ArrayList<>(residences);
     }
@@ -72,9 +74,13 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Home model = residences.get(position);
+        String location = model.getLocation();
+        int residents = model.getMembers().size();
+
         // Card Properties and Listeners
         holder.getName().setText(model.getName());
         holder.getEditBtn().setOnClickListener(v -> {
@@ -82,6 +88,8 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
             navController.navigate(action);
         });
 
+        holder.getResidentsText().setText("Residents: " + residents);
+        holder.getLocationText().setText("Location: " + (location.isEmpty() ? "?" : location));
         // Card General Listeners
         holder.getView().setOnClickListener(v -> {
             NavDirections action = HomeFragmentDirections.actionNavigationHomeToItemsFragment(position);
@@ -109,23 +117,35 @@ public class HomeListAdapter extends RecyclerView.Adapter<HomeListAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
         private final ImageButton editBtn;
+        private final TextView residentsText;
+        private final TextView locationText;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             this.name = view.findViewById(R.id.home_name);
             this.editBtn = view.findViewById(R.id.edit_btn);
+            this.residentsText = view.findViewById(R.id.member_count);
+            this.locationText = view.findViewById(R.id.location_name);
         }
 
         public TextView getName() {
             return name;
         }
 
-        public View getView() {
-            return this.itemView;
-        }
-
         public ImageButton getEditBtn() {
             return editBtn;
+        }
+
+        public TextView getResidentsText() {
+            return residentsText;
+        }
+
+        public TextView getLocationText() {
+            return locationText;
+        }
+
+        public View getView() {
+            return this.itemView;
         }
     }
 }

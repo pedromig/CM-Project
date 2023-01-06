@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gold">#669AE8</color>
     <color name="transparent">#00C69A00</color>
+
+    <color name="list_item_selected_state">#F4F6F6</color>
+    <color name="list_item_normal_state">#FFFFFF</color>
+
 </resources>

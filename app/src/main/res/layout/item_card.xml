@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="4dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
@@ -10,82 +10,72 @@
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="false">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="5dp">
-
-        <ImageView
-            android:id="@+id/profile_picture"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_baseline_fastfood_24" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="407dp"
+        android:layout_height="125dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/profile_picture"
+            android:layout_width="244dp"
+            android:layout_height="32dp"
+            android:layout_margin="10dp"
+            android:layout_marginTop="16dp"
+            android:padding="2dp"
             android:text="@string/item_name"
+            android:textColor="@color/black"
             android:textSize="18sp"
-            android:padding="2dp"/>
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.484"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/edit_btn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/white"
-            android:contentDescription="@string/edithome"
-            android:src="@drawable/ic_baseline_edit_24" />
+        <ImageView
+            android:id="@+id/item_card_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:layout_marginStart="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/item"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.65" />
 
-        <!-- <TextView
+        <TextView
             android:id="@+id/quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="5dp"
-            android:gravity="center"
+            android:layout_width="220dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="108dp"
             android:padding="2dp"
             android:text="@string/quantity"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:layout_below="@+id/edit_btn"/>-->
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_card_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.831" />
 
-        <!-- <RelativeLayout
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/quantity"
-            android:background="@drawable/box"
-            android:layout_alignParentEnd="true">
-
-            <TextView
-                android:id="@+id/quantityValue"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="5dp"
-                android:background="@color/transparent"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="1"
-                android:textColor="@color/black"
-                android:textSize="19sp" />
-        </RelativeLayout>-->
-    </RelativeLayout>
-
+        <TextView
+            android:id="@+id/expiration_date"
+            android:layout_width="220dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="108dp"
+            android:padding="2dp"
+            android:text="@string/expiration_date"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/item_card_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.494" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

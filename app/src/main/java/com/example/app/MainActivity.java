@@ -1,6 +1,7 @@
 package com.example.app;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.app.model.Person;
@@ -23,6 +24,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.app.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         // Setup Nav Controller
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);;
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         BottomNavigationView navigationView = findViewById(R.id.nav_view);
         navController.addOnDestinationChangedListener((controller, destination, bundle) -> {
             int layout = destination.getId();
@@ -67,13 +69,21 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.setVisibility(View.VISIBLE);
             }
         });
+        this.setupNavigationListeners(navController, navigationView);
 
         // Add listener for controller back button
         toolbar.setNavigationOnClickListener(v -> navController.popBackStack());
 
         // ActionBar App Bar Settings
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    private void setupNavigationListeners(NavController controller, BottomNavigationView nav) {
+        nav.setOnItemSelectedListener(item -> {
+            controller.navigate(item.getItemId());
+            return true;
+        });
+        nav.setSelectedItemId(R.id.navigation_dashboard);
     }
 
     private void setupFirebaseProfilesListener() {

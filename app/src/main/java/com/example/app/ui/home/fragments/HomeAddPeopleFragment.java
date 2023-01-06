@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 public class HomeAddPeopleFragment extends Fragment {
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private ChildEventListener membersEventListener;
 
     private Home home;
     private HomeViewModel viewModel;
@@ -56,9 +57,6 @@ public class HomeAddPeopleFragment extends Fragment {
         assert bundle != null;
         this.home = viewModel.getResidences().get(bundle.getInt("selectedHome"));
 
-        Toolbar toolbar = (Toolbar) requireActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle(home.getName() + " Residents");
-
         // Recycler View Settings
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
         PersonListAdapter personListAdapter = new PersonListAdapter(this.viewModel.getMembers(), navController);
@@ -75,7 +73,7 @@ public class HomeAddPeopleFragment extends Fragment {
 
     private void setupRecyclerViewFirebaseListeners() {
         // Setup Firebase Actions on Incoming Changes
-        db.getReference("homes")
+        this.membersEventListener = db.getReference("homes")
                 .child(this.home.getKey())
                 .child("members")
                 .addChildEventListener(new ChildEventListener() {
@@ -107,7 +105,7 @@ public class HomeAddPeopleFragment extends Fragment {
                             for (int i = 0; i < viewModel.getMembers().size(); ++i) {
                                 Person m = viewModel.getMembers().get(i);
                                 if (m.getKey().equals(person.getKey())) {
-                                    viewModel.getResidences().remove(i);
+                                    viewModel.getMembers().remove(i);
                                     PersonListAdapter adapter = (PersonListAdapter) recyclerView.getAdapter();
                                     assert adapter != null;
                                     adapter.notifyItemRemoved(i);
@@ -139,5 +137,10 @@ public class HomeAddPeopleFragment extends Fragment {
             fragment.show(getChildFragmentManager(), "AddPersonDialog");
         });
         super.onViewCreated(view, savedInstanceState);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.db.getReference().removeEventListener(this.membersEventListener);
     }
 }

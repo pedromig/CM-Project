@@ -19,6 +19,7 @@ public class Person {
 
     public Person(String email) {
         this.email = email;
+        this.name = "Unkown";
         this.shoppingList = new ArrayList<>();
         this.debts = new HashMap<>();
     }

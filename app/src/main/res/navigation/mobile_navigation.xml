@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.app.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_profile"
@@ -21,7 +21,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.app.ui.home.fragments.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_navigation_home_to_itemsFragment"
@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.app.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_navigation_profile_to_navigation_dashboard"
@@ -55,7 +55,7 @@
     <fragment
         android:id="@+id/itemsFragment"
         android:name="com.example.app.ui.home.fragments.ItemsFragment"
-        android:label="@string/title_items"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_items">
         <action
             android:id="@+id/action_itemsFragment_to_navigation_home"
@@ -71,7 +71,7 @@
     <fragment
         android:id="@+id/homeEditFragment"
         android:name="com.example.app.ui.home.fragments.HomeEditFragment"
-        android:label="@string/edit_home"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_edit_home"
         >
         <action
@@ -92,7 +92,7 @@
     <dialog
         android:id="@+id/dialogDeleteHome"
         android:name="com.example.app.ui.home.dialogs.DialogDeleteHome"
-        android:label="DialogDeleteHome">
+        android:label="@string/app_name">
         <action
             android:id="@+id/action_dialogDeleteHome_to_homeEditFragment"
             app:destination="@id/homeEditFragment" />
@@ -113,7 +113,7 @@
     <fragment
         android:id="@+id/itemEditFragment"
         android:name="com.example.app.ui.home.fragments.ItemEditFragment"
-        android:label="ItemAddFragment"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_edit_item"
         >
         <argument
@@ -124,12 +124,15 @@
         <action
             android:id="@+id/action_itemEditFragment_to_itemsFragment"
             app:destination="@id/itemsFragment" />
+        <action
+            android:id="@+id/action_itemEditFragment_to_itemShareFragment"
+            app:destination="@id/itemShareFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/login_fragment"
         android:name="com.example.app.ui.auth.LoginFragment"
-        android:label="Login"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_login_fragment_to_navigation_dashboard"
@@ -138,21 +141,33 @@
             android:id="@+id/action_login_fragment_to_registerFragment"
             app:destination="@id/register_fragment" />
     </fragment>
+
     <fragment
         android:id="@+id/register_fragment"
         android:name="com.example.app.ui.auth.RegisterFragment"
-        android:label="Register"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_register" >
         <action
             android:id="@+id/action_register_fragment_to_login_fragment"
             app:destination="@id/login_fragment" />
     </fragment>
+
     <fragment
         android:id="@+id/homeAddPeopleFragment"
         android:name="com.example.app.ui.home.fragments.HomeAddPeopleFragment"
-        android:label="HomeAddPeopleFragment" >
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home_add_people">
         <argument
             android:name="selectedHome"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemShareFragment"
+        android:name="com.example.app.ui.home.fragments.ItemShareFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_item_share" >
+        <argument android:name="selectedItem"
+            app:argType="string"/>
     </fragment>
 </navigation>

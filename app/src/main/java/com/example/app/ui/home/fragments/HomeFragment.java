@@ -48,6 +48,7 @@ import java.util.UUID;
 public class HomeFragment extends Fragment {
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private ChildEventListener homesEventListener;
 
     private HomeViewModel viewModel;
 
@@ -76,7 +77,7 @@ public class HomeFragment extends Fragment {
 
     private void setupRecyclerViewFirebaseListeners() {
         // Setup Firebase Actions on Incoming Changes
-        db.getReference("homes").addChildEventListener(new ChildEventListener() {
+        this.homesEventListener = db.getReference("homes").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
                 Home home = snapshot.getValue(Home.class);
@@ -183,4 +184,9 @@ public class HomeFragment extends Fragment {
         return true;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        this.db.getReference().removeEventListener(this.homesEventListener);
+    }
 }

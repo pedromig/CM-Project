@@ -1,5 +1,6 @@
 package com.example.app.ui.home.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -88,11 +89,16 @@ public class HomeEditFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         this.homeName.setText(this.home.getName());
         this.homeLocation.setText(this.home.getLocation());
+
+        if (this.home.getMembers().size() > 1) {
+            this.deleteButton.setText("Leave Home");
+        }
 
         this.deleteButton.setOnClickListener(v -> {
             DialogDeleteHome fragment = new DialogDeleteHome(this.home, this.viewModel);
@@ -126,28 +132,22 @@ public class HomeEditFragment extends Fragment {
             toast.show();
         });
 
-        this.updateImage.setOnClickListener(new View.OnClickListener(){
+        this.updateImage.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(getActivity(), updateImage);
+            popupMenu.getMenuInflater().inflate(R.menu.photo_edit_menu, popupMenu.getMenu());
 
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(getActivity(), updateImage);
-                popupMenu.getMenuInflater().inflate(R.menu.photo_edit_menu, popupMenu.getMenu());
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.action_camera) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            ImagePickerCamera.launch(intent);
-                        }
-                        if (item.getItemId() == R.id.action_gallery) {
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            ImagePickerGallery.launch(intent);
-                        }
-                        return true;
-                    }
-                });
-                popupMenu.show();
-            }
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_camera) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    ImagePickerCamera.launch(intent);
+                }
+                if (item.getItemId() == R.id.action_gallery) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    ImagePickerGallery.launch(intent);
+                }
+                return true;
+            });
+            popupMenu.show();
         });
 
 
@@ -185,11 +185,11 @@ public class HomeEditFragment extends Fragment {
 
     ActivityResultLauncher<Intent> ImagePickerGallery = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri uri =  result.getData().getData();
+                        Uri uri = result.getData().getData();
                         picture.setImageURI(uri);
                     }
                 }

@@ -28,13 +28,14 @@ public class Item {
 
     public Item() {}
 
-    public Item(String homeKey, String name, double price, int quantity, String expirationDate) {
+    public Item(String homeKey, String name, double price, int quantity,
+                String expirationDate, ArrayList<String> owners) {
         this.name = name;
         this.homeKey = homeKey;
         this.price = price;
         this.quantity = quantity;
         this.expirationDate = expirationDate;
-        this.owners = new ArrayList<>(List.of(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+        this.owners = owners;
     }
 
     public String getHomeKey() {
@@ -95,5 +96,9 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setOwners(ArrayList<String> owners) {
+        this.owners = owners;
     }
 }

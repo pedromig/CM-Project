@@ -13,8 +13,13 @@ import androidx.navigation.Navigation;
 
 import com.example.app.R;
 import com.example.app.model.Home;
+import com.example.app.model.Person;
 import com.example.app.ui.home.models.HomeViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class DialogDeleteHome extends DialogFragment {
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -31,9 +36,23 @@ public class DialogDeleteHome extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Do you want to delete this home?")
-                .setPositiveButton(R.string.delete, (dialog, id) -> {
-                    db.getReference("homes").child(home.getKey()).removeValue();
+
+        String action;
+        if (this.home.getMembers().size() > 1) {
+            action = "leave ";
+        } else {
+            action = "delete";
+        }
+        builder.setMessage("Do you want to " + action + " this home?")
+                .setPositiveButton(action, (dialog, id) -> {
+                    if (home.getMembers().size() > 1) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        home.getMembers().remove(user.getUid());
+                        db.getReference("homes").child(home.getKey()).
+                                child("members").setValue(home.getMembers());
+                    } else {
+                        db.getReference("homes").child(home.getKey()).removeValue();
+                    }
                     this.viewModel.getResidences().remove(home);
 
                     NavController navController = Navigation.findNavController(requireActivity(),
