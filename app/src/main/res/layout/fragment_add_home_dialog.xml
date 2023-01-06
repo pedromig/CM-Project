@@ -11,6 +11,7 @@
         android:layout_margin="10dp"
         android:textSize="23sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:scaleType="center" />
 
     <EditText
@@ -22,6 +23,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
         android:hint="@string/home"
         android:importantForAutofill="no" />
 </LinearLayout>

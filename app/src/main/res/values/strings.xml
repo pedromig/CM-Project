@@ -69,4 +69,6 @@
     <string name="resident_email">Add Resident</string>
     <string name="location_name">Location</string>
     <string name="expiration_date">Expiration Date</string>
+    <string name="edit_profile">Edit</string>
+    <string name="update_password">Update Password</string>
 </resources>

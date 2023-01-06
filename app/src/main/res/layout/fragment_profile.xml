@@ -1,70 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <ImageView
-        android:id="@+id/profilePicture"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="40dp"
+        android:id="@+id/profile_picture"
+        android:layout_width="199dp"
+        android:layout_height="196dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:scaleType="centerCrop"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nameDisplay"
+        android:id="@+id/name_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
         android:layout_marginTop="40dp"
+        android:maxLines="1"
+        android:layout_marginEnd="20dp"
         android:text="@string/name"
-        android:textSize="30sp"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+        android:padding="5dp"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/emailDisplay"
+        android:id="@+id/email_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:maxLines="1"
         android:text="@string/prompt_email"
-        android:textSize="25dp"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@+id/nameDisplay"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <ImageButton
-        android:id="@+id/editBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
-        android:background="@color/transparent"
-        android:layout_margin="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:padding="5dp"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/logout_button"
-        android:layout_width="182dp"
-        android:layout_height="48dp"
+        android:layout_width="309dp"
+        android:layout_height="66dp"
+        android:layout_margin="40dp"
         android:text="@string/logout"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailDisplay" />
+        android:textSize="20sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -9,6 +9,7 @@
         android:text="@string/resident_email"
         android:contentDescription="@string/app_name"
         android:layout_margin="10dp"
+        android:textColor="@color/black"
         android:textSize="23sp"
         android:textStyle="bold"
         android:scaleType="center" />
@@ -21,6 +22,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
         android:hint="@string/prompt_email"
         android:importantForAutofill="no"
         android:inputType="textEmailAddress"

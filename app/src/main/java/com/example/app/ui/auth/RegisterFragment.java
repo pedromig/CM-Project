@@ -93,7 +93,7 @@ public class RegisterFragment extends Fragment {
             }
 
             if (password.length() < 6) {
-                Toast.makeText(requireActivity(), "Password length must greater than 6 characters",
+                Toast.makeText(requireActivity(), "Password length must be greater than 6 characters",
                         Toast.LENGTH_SHORT).show();
                 return;
             }

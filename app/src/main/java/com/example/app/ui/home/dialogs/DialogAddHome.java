@@ -31,11 +31,9 @@ public class DialogAddHome extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_add_home_dialog, null);
         EditText homeName = view.findViewById(R.id.dialog_home_name);
 
-        builder.setView(view).setMessage("Note Title")
-                .setPositiveButton("Add", (dialog, id) -> {
-                })
-                .setNegativeButton("Cancel", (dialog, id) -> {
-                });
+        builder.setView(view)
+                .setPositiveButton("Add", (dialog, id) -> {})
+                .setNegativeButton("Cancel", (dialog, id) -> {});
 
         AlertDialog dialog = builder.create();
         dialog.show();
