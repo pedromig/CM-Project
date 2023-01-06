@@ -14,12 +14,13 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="120dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="120dp"
         android:layout_marginBottom="40dp"
         android:src="@drawable/profile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editProfilePictureBtn"
@@ -44,38 +45,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
 
-    <EditText
-        android:id="@+id/emailChangeEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:paddingBottom="15dp"
-        android:text="@string/prompt_email"
-        android:textSize="20dp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@+id/nameChangeEditText"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordChangeEditText"
-        android:layout_width="match_parent"
-        app:passwordToggleEnabled="true"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@+id/emailChangeEditText">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="@color/transparent"
-            android:inputType="textPassword"
-            android:hint="@string/prompt_password"
-            android:textAlignment="center"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
 
     <Button
         android:id="@+id/saveBtn"
@@ -86,6 +55,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordChangeEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/nameChangeEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

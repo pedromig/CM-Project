@@ -46,7 +46,7 @@
     <string name="shopping_list">Open shopping list</string>
     <string name="owed">Owed</string>
     <string name="home_stock">You have X items in your house</string>
-    <string name="shopping_stock">You have X items in the shopping cart</string>
+    <string name="members">You have X associated members</string>
     <string name="edit_home">Edit Home</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
