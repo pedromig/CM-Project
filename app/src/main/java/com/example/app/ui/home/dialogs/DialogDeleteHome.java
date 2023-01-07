@@ -3,7 +3,9 @@ package com.example.app.ui.home.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -32,6 +34,13 @@ public class DialogDeleteHome extends DialogFragment {
         this.viewModel = viewModel;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -54,6 +63,9 @@ public class DialogDeleteHome extends DialogFragment {
                         db.getReference("homes").child(home.getKey()).removeValue();
                     }
                     this.viewModel.getResidences().remove(home);
+
+                    Toast.makeText(requireActivity(), "Operation completed successfully!",
+                            Toast.LENGTH_SHORT).show();
 
                     NavController navController = Navigation.findNavController(requireActivity(),
                             R.id.nav_host_fragment_activity_main);

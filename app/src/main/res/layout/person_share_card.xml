@@ -17,13 +17,13 @@ app:cardUseCompatPadding="false">
 
     <CheckBox
         android:id="@+id/check_box"
-        android:layout_width="62dp"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="23dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="15dp"
         android:layout_toStartOf="@+id/person_name"
         android:minWidth="48dp" />
 
@@ -37,7 +37,6 @@ app:cardUseCompatPadding="false">
         android:layout_marginTop="9dp"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@id/profile_picture"
         android:text="@string/name"
 
         android:textStyle="bold"

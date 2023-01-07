@@ -40,7 +40,6 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Vi
         // Card Properties and Listeners
         holder.getName().setText(model.getName());
         holder.getEmail().setText(model.getEmail());
-
     }
 
     @Override

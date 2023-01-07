@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_profile"
             app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_navigation_home_to_shoppingListFragment"
+            app:destination="@id/shoppingListFragment" />
     </fragment>
 
     <fragment
@@ -182,4 +185,9 @@
             android:name="selectedPerson"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/shoppingListFragment"
+        tools:layout="@layout/fragment_shopping_list"
+        android:name="com.example.app.ui.home.fragments.ShoppingListFragment"
+        android:label="@string/app_name" />
 </navigation>

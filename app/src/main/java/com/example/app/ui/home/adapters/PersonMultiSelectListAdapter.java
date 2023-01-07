@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
 import com.example.app.model.Person;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class PersonMultiSelectListAdapter extends RecyclerView.Adapter<PersonMultiSelectListAdapter.ViewHolder> {
-
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private ArrayList<Person> people;
     private ArrayList<Person> selected;
     private Context context;
@@ -39,6 +41,8 @@ public class PersonMultiSelectListAdapter extends RecyclerView.Adapter<PersonMul
     @Override
     public void onBindViewHolder(PersonMultiSelectListAdapter.ViewHolder holder, int position) {
         Person model = people.get(position);
+
+        FirebaseUser user = this.auth.getCurrentUser();
         holder.getName().setText(model.getName());
         holder.getEmail().setText(model.getEmail());
 
@@ -50,14 +54,15 @@ public class PersonMultiSelectListAdapter extends RecyclerView.Adapter<PersonMul
             }
         }
 
-        // Set listeners
-        holder.getView().setOnClickListener(v -> {
-            holder.toggle(selected, model);
-        });
-        holder.getCheckBox().setOnClickListener(v -> {
-            holder.toggle(selected, model);
-        });
-
+        if (!user.getUid().equals(model.getKey()))  {
+            // Set listeners
+            holder.getView().setOnClickListener(v -> {
+                holder.toggle(selected, model);
+            });
+            holder.getCheckBox().setOnClickListener(v -> {
+                holder.toggle(selected, model);
+            });
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.app.ui.home.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,13 @@ public class DialogAddPersonToHome extends DialogFragment {
 
     public DialogAddPersonToHome(Home home) {
         this.home = home;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
     }
 
     @NonNull

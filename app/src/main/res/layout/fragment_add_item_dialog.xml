@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_item_shopping_list"
+        android:contentDescription="@string/app_name"
+        android:layout_margin="10dp"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:scaleType="center" />
+
+    <EditText
+        android:id="@+id/dialog_item_name"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:hint="@string/item"
+        android:importantForAutofill="no" />
+</LinearLayout>

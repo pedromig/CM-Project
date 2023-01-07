@@ -31,6 +31,7 @@ import com.example.app.model.Home;
 import com.example.app.ui.home.adapters.HomeListAdapter;
 import com.example.app.ui.home.dialogs.DialogAddHome;
 import com.example.app.ui.home.models.HomeViewModel;
+import com.example.app.ui.home.models.PersonViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -180,6 +181,11 @@ public class HomeFragment extends Fragment {
         if (item.getItemId() == R.id.action_new_home) {
             DialogAddHome fragment = new DialogAddHome();
             fragment.show(getChildFragmentManager(), "AddHomeDialog");
+        }
+        if (item.getItemId() == R.id.action_shopping_list) {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            NavDirections action = HomeFragmentDirections.actionNavigationHomeToShoppingListFragment();
+            navController.navigate(action);
         }
         return true;
     }

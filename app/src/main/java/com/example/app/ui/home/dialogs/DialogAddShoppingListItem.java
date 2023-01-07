@@ -15,13 +15,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.app.R;
-import com.example.app.model.Home;
-import com.example.app.ui.home.models.HomeViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class DialogAddHome extends DialogFragment {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+
+public class DialogAddShoppingListItem extends DialogFragment {
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+
+    private final ArrayList<String> shoppingItems;
+    public DialogAddShoppingListItem(ArrayList<String> items) {
+        this.shoppingItems = items;
+    }
 
     @Override
     public void onStart() {
@@ -35,33 +45,33 @@ public class DialogAddHome extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.fragment_add_home_dialog, null);
-        EditText homeName = view.findViewById(R.id.dialog_home_name);
+        View view = inflater.inflate(R.layout.fragment_add_item_dialog, null);
+        EditText itemName = view.findViewById(R.id.dialog_item_name);
 
         builder.setView(view)
-                .setPositiveButton("Add", (dialog, id) -> {})
-                .setNegativeButton("Cancel", (dialog, id) -> {});
-
+                .setPositiveButton("Add", (dialog, id) -> {
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                });
         AlertDialog dialog = builder.create();
         dialog.show();
 
         // Customize Alert Dialog Button Behaviour
         Button btn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         btn.setOnClickListener(v -> {
-            String name = homeName.getText().toString();
+            String name = itemName.getText().toString();
             if (name.isEmpty()) {
-
-                Toast toast = Toast.makeText(this.getContext(), "Home name must not be empty!",
+                Toast toast = Toast.makeText(this.getContext(), "Item name must not be empty!",
                         Toast.LENGTH_SHORT);
                 toast.show();
                 return;
             }
-            Home home = new Home(name);
-            DatabaseReference ref = db.getReference("homes").push();
-            home.setKey(ref.getKey());
-            ref.setValue(home);
+            DatabaseReference ref = db.getReference().child("profiles")
+                    .child(Objects.requireNonNull(auth.getUid())).child("shopping");
+            shoppingItems.add(name);
+            ref.setValue(shoppingItems);
 
-            Toast toast = Toast.makeText(this.getContext(), "Home added successfully!",
+            Toast toast = Toast.makeText(this.getContext(), "Item added successfully!",
                     Toast.LENGTH_SHORT);
             toast.show();
             dialog.dismiss();

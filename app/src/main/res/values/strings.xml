@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fridge Mates</string>
+    <string name="app_name">FridgeMates</string>
     <string name="title_home">Residences</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_profile">Profile</string>
@@ -71,4 +71,7 @@
     <string name="expiration_date">Expiration Date</string>
     <string name="edit_profile">Edit</string>
     <string name="update_password">Update Password</string>
+    <string name="check_item">Check Item</string>
+    <string name="add_item_shopping_list">Add Item</string>
+    <string name="item">Item</string>
 </resources>

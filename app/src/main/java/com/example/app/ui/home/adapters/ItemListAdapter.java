@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app.R;
 import com.example.app.model.Home;
 import com.example.app.model.Item;
+import com.example.app.ui.home.dialogs.DialogItemRemove;
 import com.example.app.ui.home.fragments.ItemsFragment;
 import com.example.app.ui.home.fragments.ItemsFragmentDirections;
 import com.example.app.ui.home.models.ItemViewModel;
@@ -29,6 +31,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> implements Filterable {
+    private final FragmentManager fragmentManager;
     private ItemViewModel viewModel;
     private Home home;
 
@@ -37,12 +40,14 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     private final NavController navController;
 
 
-    public ItemListAdapter(ArrayList<Item> items, Home home, NavController navController, ItemViewModel viewModel) {
+    public ItemListAdapter(ArrayList<Item> items, Home home, NavController navController, ItemViewModel viewModel,
+                           FragmentManager fragmentManager) {
         this.items = items;
         this.home = home;
         this.itemsFull = new ArrayList<>(items);
         this.navController = navController;
         this.viewModel = viewModel;
+        this.fragmentManager = fragmentManager;
     }
 
     private final Filter filter = new Filter() {
@@ -101,11 +106,29 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             if (this.viewModel.getOwners() != null) {
                 this.viewModel.getOwners().clear();
             }
+            this.viewModel.setSet(false);
+            if (this.viewModel.getSaved() != null) {
+                this.viewModel.getSaved().clear();
+            }
+
+            // Set Current Money Status
+            this.viewModel.setSavedAmount(model.getPrice() * model.getQuantity());
+
             NavDirections action = ItemsFragmentDirections.actionItemsFragmentToItemEditFragment(position, home.getKey());
             navController.navigate(action);
         });
 
-        holder.getView().setOnLongClickListener(v -> true);
+        // Delete Item Dialog
+        holder.getDeleteButton().setOnClickListener(v -> {
+            DialogItemRemove fragment = new DialogItemRemove(model, this, position);
+            fragment.show(this.fragmentManager, "RemoveItemDialog");
+        });
+
+        holder.getView().setOnLongClickListener(v -> {
+            DialogItemRemove fragment = new DialogItemRemove(model, this, position);
+            fragment.show(this.fragmentManager, "RemoveItemDialog");
+            return true;
+        });
     }
 
     @Override
@@ -115,7 +138,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
     @Override
     public Filter getFilter() {
-        return null;
+        return this.filter;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -123,6 +146,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         private final TextView name;
         private final TextView expiration;
         private final TextView quantity;
+        private final ImageButton deleteButton;
 
         public ViewHolder(@NonNull View view) {
             super(view);
@@ -130,10 +154,15 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             this.picture = view.findViewById(R.id.item_image);
             this.expiration = view.findViewById(R.id.expiration_date);
             this.quantity = view.findViewById(R.id.quantity);
+            this.deleteButton = view.findViewById(R.id.delete_item_button);
         }
 
         public TextView getName() {
             return name;
+        }
+
+        public ImageButton getDeleteButton() {
+            return deleteButton;
         }
 
         public ImageView getPicture() {

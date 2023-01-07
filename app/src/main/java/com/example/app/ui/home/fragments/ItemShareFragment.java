@@ -60,8 +60,8 @@ public class ItemShareFragment extends Fragment {
         this.recyclerView = view.findViewById(R.id.multiselect_share_list);
 
         PersonMultiSelectListAdapter multiSelectAdapter = new PersonMultiSelectListAdapter(getContext(), this.homeViewModel.getMembers(), this.viewModel.getOwners());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(multiSelectAdapter);
 

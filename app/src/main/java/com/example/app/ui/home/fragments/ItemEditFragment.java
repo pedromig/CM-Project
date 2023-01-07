@@ -43,14 +43,18 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Date;
@@ -226,20 +230,9 @@ public class ItemEditFragment extends Fragment {
             int quantity = Integer.parseInt(itemQuantity.getText().toString());
 
             // Dates
-
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            try {
-                Date today = format.parse(format.format(Date.from(Instant.now())));
-                if (expirationDate != null && expirationDate.before(today)) {
-                    Toast toast = Toast.makeText(this.getContext(), "Expiration date must be in the future.",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-                    return;
-                } else {
-                    this.expirationDate = Date.from(Instant.now());
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if (expirationDate == null) {
+                expirationDate = Date.from(Instant.now().plus(30, ChronoUnit.DAYS));
             }
             String date = format.format(this.expirationDate);
 
@@ -252,13 +245,23 @@ public class ItemEditFragment extends Fragment {
 
             // Owners
             ArrayList<String> owners = new ArrayList<>();
-            for (Person p : this.viewModel.getOwners()) {
-                if (!owners.contains(p.getKey())) {
-                    owners.add(p.getKey());
+            if (!this.viewModel.getOwners().isEmpty()) {
+                for (Person p : this.viewModel.getOwners()) {
+                    if (!owners.contains(p.getKey())) {
+                        owners.add(p.getKey());
+                    }
+                }
+            } else {
+                if (this.item != null) {
+                    for (String p : this.item.getOwners()) {
+                        if (!owners.contains(p)) {
+                            owners.add(p);
+                        }
+                    }
                 }
             }
-            System.out.println("HERE: " + owners.size());
 
+            HashMap<String, Double> balance = new HashMap<>();
             if (item == null) {
                 FirebaseUser user = auth.getCurrentUser();
                 assert user != null;
@@ -270,10 +273,29 @@ public class ItemEditFragment extends Fragment {
                 item.setKey(ref.getKey());
                 ref.setValue(item);
 
+                // Money
+                double split = (Double.parseDouble(price) * quantity) / owners.size();
+                for (String o : owners) {
+                    for (Person s : this.personViewModel.getPeople()) {
+                        if (s.getKey().equals(o)) {
+                            balance.put(s.getKey(), split);
+                            break;
+                        }
+                    }
+                }
+
+                System.out.println("----");
+                for (String x : balance.keySet()) {
+                    System.out.println(x + " " + balance.get(x));
+                }
+                System.out.println("----");
+
+                // Message
                 Toast toast = Toast.makeText(this.getContext(), "Item created successfully",
                         Toast.LENGTH_SHORT);
                 toast.show();
 
+                // PopBack Stack
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.popBackStack();
             } else {
@@ -291,13 +313,70 @@ public class ItemEditFragment extends Fragment {
                 itemUpdates.put("quantity", quantity);
                 DatabaseReference ref = db.getReference("items").child(item.getKey());
                 ref.updateChildren(itemUpdates);
-                System.out.println("HERE: " + owners.size());
                 ref.child("owners").setValue(owners);
 
+                // Money
+                double split = viewModel.getSavedAmount() / viewModel.getSaved().size();
+                for (Person s : this.viewModel.getSaved()) {
+                    balance.put(s.getKey(), -split);
+                }
+
+                double newAmount = Double.parseDouble(price) * quantity;
+                viewModel.setSavedAmount(newAmount);
+                double newSplit = (newAmount / this.viewModel.getOwners().size());
+                for (Person o : this.viewModel.getOwners()) {
+                    Double old = balance.getOrDefault(o.getKey(), 0.0);
+                    assert old != null;
+                    balance.put(o.getKey(), old + newSplit);
+                }
+
+                System.out.println("----");
+                for (String x : balance.keySet()) {
+                    System.out.println(x + " " + balance.get(x));
+                }
+                System.out.println("----");
+
+                // Toast Message
                 Toast toast = Toast.makeText(this.getContext(), "Item updated successfully",
                         Toast.LENGTH_SHORT);
                 toast.show();
             }
+
+            FirebaseUser user = auth.getCurrentUser();
+            db.getReference("profiles").child(user.getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Person person = snapshot.getValue(Person.class);
+                            DatabaseReference ref = db.getReference("profiles")
+                                    .child(user.getUid()).child("debts");
+                            assert person != null;
+                            if (person.getDebts() == null) {
+                                ref.push();
+                                person.setDebts(new HashMap<>());
+                            }
+                            HashMap<String, Double> debts = person.getDebts();
+                            for (String p : balance.keySet()) {
+                                if (debts.containsKey(p)) {
+                                    debts.put(p, debts.get(p) + balance.get(p));
+                                } else {
+                                    debts.put(p, balance.get(p));
+                                }
+                            }
+                            ref.setValue(debts);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            System.out.println(error);
+                        }
+                    });
+
+            this.viewModel.setSet(false);
+            if (this.viewModel.getSaved() != null) {
+                this.viewModel.getSaved().clear();
+            }
+            // remove item -> delete or add to shopping list.
+
         });
         super.onViewCreated(view, savedInstanceState);
     }
@@ -313,24 +392,30 @@ public class ItemEditFragment extends Fragment {
         if (item.getItemId() == R.id.action_share_item) {
             // If item exists load owners
             if (this.item != null) {
-                System.out.println("there");
-                System.out.println(this.item.getOwners().size());
                 for (String owner : this.item.getOwners()) {
                     for (Person p : this.personViewModel.getPeople()) {
-                        if (p.getKey().equals(owner)) {
+                        if (p.getKey().equals(owner) &&
+                                !this.viewModel.getOwners().contains(p)) {
                             this.viewModel.addOwner(p);
                         }
                     }
                 }
             } else {
-                System.out.println("Here");
                 FirebaseUser current = auth.getCurrentUser();
                 for (Person p : this.personViewModel.getPeople()) {
-                    if (p.getKey().equals(current.getUid())) {
+                    if (p.getKey().equals(current.getUid()) &&
+                            !this.viewModel.getOwners().contains(p)) {
                         this.viewModel.addOwner(p);
                     }
                 }
             }
+            if (!this.viewModel.isSet()) {
+                this.viewModel.setSaved(new ArrayList<>(this.viewModel.getOwners()));
+                this.viewModel.setSet(true);
+            }
+
+            // System.out.println("Owners: " + this.viewModel.getOwners().size());
+            // System.out.println("Saved: " + this.viewModel.getSaved().size());
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             NavDirections action = ItemEditFragmentDirections.actionItemEditFragmentToItemShareFragment(this.homeKey);
             navController.navigate(action);

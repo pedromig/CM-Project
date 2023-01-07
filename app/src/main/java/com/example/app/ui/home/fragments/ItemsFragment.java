@@ -1,12 +1,10 @@
 package com.example.app.ui.home.fragments;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -32,21 +30,21 @@ import com.example.app.ui.home.models.HomeViewModel;
 import com.example.app.ui.home.models.ItemViewModel;
 import com.example.app.ui.home.models.PersonViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
-// TODO: fix bugs on search item
 public class ItemsFragment extends Fragment {
+    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+
     private ItemViewModel viewModel;
     private HomeViewModel homeViewModel;
     private PersonViewModel personViewModel;
 
-    private final FirebaseDatabase db = FirebaseDatabase.getInstance();
     private ChildEventListener itemsEventListener;
     private ChildEventListener houseMembersEventListener;
 
@@ -58,7 +56,6 @@ public class ItemsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_items, container, false);
 
         this.personViewModel = new ViewModelProvider(requireActivity()).get(PersonViewModel.class);
@@ -86,7 +83,8 @@ public class ItemsFragment extends Fragment {
 
         // Recycler View Settings
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-        ItemListAdapter itemListAdapter = new ItemListAdapter(this.viewModel.getItems(), home, navController, viewModel);
+        ItemListAdapter itemListAdapter = new ItemListAdapter(this.viewModel.getItems(), home,
+                navController, viewModel, getChildFragmentManager());
         this.itemRecyclerView = view.findViewById(R.id.items_list);
         this.itemRecyclerView.setAdapter(itemListAdapter);
         this.setupRecyclerViewFirebaseListeners();
@@ -95,67 +93,93 @@ public class ItemsFragment extends Fragment {
     }
 
     private void setupRecyclerViewFirebaseListeners() {
+        FirebaseUser user = this.auth.getCurrentUser();
         // Setup Firebase Actions on Incoming Changes
-        this.itemsEventListener = db.getReference("items").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
-                Item item = snapshot.getValue(Item.class);
-                if (item != null && item.getHomeKey().equals(home.getKey())) {
-                    for (Item it : viewModel.getItems()) {
-                        if (it.getKey().equals(item.getKey())) {
+        this.itemsEventListener = db.getReference("items")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, String s) {
+                        Item item = snapshot.getValue(Item.class);
+                        assert user != null;
+                        if (item == null)
                             return;
-                        }
-                    }
-                    item.setKey(snapshot.getKey());
-                    viewModel.addItem(snapshot.getValue(Item.class));
-                    ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
-                    assert adapter != null;
-                    adapter.update();
-                    adapter.notifyItemInserted(viewModel.getItems().size() - 1);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, String s) {
-                Item item = snapshot.getValue(Item.class);
-                if (item != null && item.getHomeKey().equals(home.getKey())) {
-                    for (int i = 0; i < viewModel.getItems().size(); ++i) {
-                        Item it = viewModel.getItems().get(i);
-                        if (it.getKey().equals(snapshot.getKey())) {
-                            viewModel.getItems().set(i, item);
+                        if (item.getOwners() == null)
+                            return;
+                        if (item.getHomeKey().equals(home.getKey())
+                                && item.getOwners().contains(user.getUid())) {
+                            for (Item it : viewModel.getItems()) {
+                                if (it.getKey().equals(item.getKey())) {
+                                    return;
+                                }
+                            }
+                            item.setKey(snapshot.getKey());
+                            viewModel.addItem(snapshot.getValue(Item.class));
                             ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
                             assert adapter != null;
                             adapter.update();
-                            adapter.notifyItemChanged(i);
-                            return;
+                            adapter.notifyItemInserted(viewModel.getItems().size() - 1);
                         }
                     }
-                }
-            }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                for (int i = 0; i < viewModel.getItems().size(); ++i) {
-                    Item it = viewModel.getItems().get(i);
-                    if (it.getKey().equals(snapshot.getKey())) {
-                        viewModel.getItems().remove(i);
-                        ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
-                        assert adapter != null;
-                        adapter.update();
-                        adapter.notifyItemRemoved(i);
-                        return;
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, String s) {
+                        Item item = snapshot.getValue(Item.class);
+                        assert user != null;
+                        if (item == null)
+                            return;
+                        if (item.getOwners() == null) {
+                            for (int i = 0; i < viewModel.getItems().size(); ++i) {
+                                Item it = viewModel.getItems().get(i);
+                                if (it.getKey().equals(snapshot.getKey())) {
+                                    viewModel.getItems().remove(i);
+                                    ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
+                                    assert adapter != null;
+                                    adapter.update();
+                                    adapter.notifyItemRemoved(i);
+                                    break;
+                                }
+                            }
+                            return;
+                        }
+                        if (item.getHomeKey().equals(home.getKey())
+                                && item.getOwners().contains(user.getUid())) {
+                            for (int i = 0; i < viewModel.getItems().size(); ++i) {
+                                Item it = viewModel.getItems().get(i);
+                                if (it.getKey().equals(snapshot.getKey())) {
+                                    viewModel.getItems().set(i, item);
+                                    ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
+                                    assert adapter != null;
+                                    adapter.update();
+                                    adapter.notifyItemChanged(i);
+                                    return;
+                                }
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, String s) {
-            }
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                        for (int i = 0; i < viewModel.getItems().size(); ++i) {
+                            Item it = viewModel.getItems().get(i);
+                            if (it.getKey().equals(snapshot.getKey())) {
+                                viewModel.getItems().remove(i);
+                                ItemListAdapter adapter = (ItemListAdapter) itemRecyclerView.getAdapter();
+                                assert adapter != null;
+                                adapter.update();
+                                adapter.notifyItemRemoved(i);
+                                return;
+                            }
+                        }
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, String s) {
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
         this.houseMembersEventListener = db.getReference("homes")
                 .child(this.home.getKey())
@@ -210,6 +234,15 @@ public class ItemsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         this.floatingActionButton.setOnClickListener(v -> {
+            // Flush owners
+            if (this.viewModel.getOwners() != null) {
+                this.viewModel.getOwners().clear();
+            }
+            this.viewModel.setSet(false);
+            if (this.viewModel.getSaved() != null) {
+                this.viewModel.getSaved().clear();
+            }
+            this.viewModel.setSavedAmount(0.0);
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             NavDirections action = ItemsFragmentDirections.actionItemsFragmentToItemEditFragment(Item.NEW_ITEM, home.getKey());
             navController.navigate(action);
