@@ -109,7 +109,6 @@ public class EditProfileFragment extends Fragment {
                                         bitmap, "image", null);
 
                                 imageUri = Uri.parse(path);
-                                // imageUri = result.getData().getData();
                                 System.out.println(imageUri.toString());
                                 picture.setImageURI(imageUri);
                             }

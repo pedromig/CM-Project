@@ -23,7 +23,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.app.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
@@ -109,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < viewModel.getPeople().size(); ++i) {
                         Person p = viewModel.getPeople().get(i);
                         if (p.getKey().equals(snapshot.getKey())) {
-                            viewModel.getPeople().set(i, p);
+                            person.setKey(snapshot.getKey());
+                            viewModel.getPeople().set(i, person);
                             return;
                         }
                     }

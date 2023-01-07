@@ -23,12 +23,10 @@ import java.util.ArrayList;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> implements Filterable {
     private final Context context;
-
     private MenuItem check;
     private ArrayList<String> shoppingItems;
     private ArrayList<String> shoppingItemsFull;
     private ArrayList<String> selected;
-    private int activated;
 
     public ShoppingListAdapter(Context context, ArrayList<String> shoppingItems, ArrayList<String> selected, MenuItem check) {
         this.context = context;

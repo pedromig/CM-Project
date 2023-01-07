@@ -6,9 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,7 +17,6 @@ import com.example.app.R;
 import com.example.app.model.Item;
 import com.example.app.model.Person;
 import com.example.app.ui.home.adapters.ItemListAdapter;
-import com.example.app.ui.home.models.ItemViewModel;
 import com.example.app.ui.home.models.PersonViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -77,12 +74,12 @@ public class DialogItemRemove extends DialogFragment {
                     .child("shopping");
             for (Person p : viewModel.getPeople()) {
                 if (p.getKey().equals(user.getUid())) {
-                    if (p.getShoppingList() == null) {
+                    if (p.getShopping() == null) {
                         ref.push();
-                        p.setShoppingList(new ArrayList<>());
+                        p.setShopping(new ArrayList<>());
                     }
-                    p.getShoppingList().add(this.item.getName());
-                    ref.setValue(p.getShoppingList());
+                    p.getShopping().add(this.item.getName());
+                    ref.setValue(p.getShopping());
                     break;
                 }
             }

@@ -38,8 +38,13 @@ import com.example.app.ui.home.dialogs.DialogDeleteHome;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class HomeEditFragment extends Fragment {
 
@@ -53,6 +58,8 @@ public class HomeEditFragment extends Fragment {
     private Button deleteButton;
     private EditText homeName;
     private EditText homeLocation;
+
+    private Uri imageUri;
     private ImageView picture;
     private FloatingActionButton updateImage;
 
@@ -96,6 +103,12 @@ public class HomeEditFragment extends Fragment {
         this.homeName.setText(this.home.getName());
         this.homeLocation.setText(this.home.getLocation());
 
+        if (this.home.getPicture() != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference ref = storage.getReference().child(this.home.getPicture());
+            ref.getDownloadUrl().addOnCompleteListener(task -> Picasso.get().load(task.getResult().toString()).into(this.picture));
+        }
+
         if (this.home.getMembers().size() > 1) {
             this.deleteButton.setText("Leave Home");
         }
@@ -116,6 +129,18 @@ public class HomeEditFragment extends Fragment {
                 return;
             }
 
+            if (this.imageUri != null) {
+                // Save Data Locally
+                String uid = UUID.randomUUID().toString();
+                this.home.setPicture(uid);
+
+                // Save Date Upstream
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference ref = storage.getReference();
+                ref.child(uid).putFile(imageUri);
+            }
+
+
             // Update Values Locally
             this.home.setName(name);
             this.home.setLocation(location);
@@ -132,25 +157,7 @@ public class HomeEditFragment extends Fragment {
             toast.show();
         });
 
-        this.updateImage.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(getActivity(), updateImage);
-            popupMenu.getMenuInflater().inflate(R.menu.photo_edit_menu, popupMenu.getMenu());
-
-            popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_camera) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    ImagePickerCamera.launch(intent);
-                }
-                if (item.getItemId() == R.id.action_gallery) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    ImagePickerGallery.launch(intent);
-                }
-                return true;
-            });
-            popupMenu.show();
-        });
-
-
+        this.imagePicker();
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -169,29 +176,60 @@ public class HomeEditFragment extends Fragment {
         }
         return true;
     }
+    public void imagePicker() {
+        this.updateImage.setOnClickListener(new View.OnClickListener() {
+            final ActivityResultLauncher<Intent> ImagePickerCamera = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                                Bundle bundle = result.getData().getExtras();
+                                Bitmap bitmap = (Bitmap) bundle.get("data");
+                                picture.setImageBitmap(bitmap);
 
-    ActivityResultLauncher<Intent> ImagePickerCamera = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Bundle bundle = result.getData().getExtras();
-                        Bitmap bitmap = (Bitmap) bundle.get("data");
-                        picture.setImageBitmap(bitmap);
-                    }
-                }
-            });
+                                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                                String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(),
+                                        bitmap, "image", null);
 
-    ActivityResultLauncher<Intent> ImagePickerGallery = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri uri = result.getData().getData();
-                        picture.setImageURI(uri);
+                                imageUri = Uri.parse(path);
+                                // imageUri = result.getData().getData();
+                                System.out.println(imageUri.toString());
+                                picture.setImageURI(imageUri);
+                            }
+                        }
+                    });
+
+            final ActivityResultLauncher<Intent> ImagePickerGallery = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                                imageUri = result.getData().getData();
+                                picture.setImageURI(imageUri);
+                            }
+                        }
+                    });
+
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(getActivity(), updateImage);
+                popupMenu.getMenuInflater().inflate(R.menu.photo_edit_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.action_camera) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        ImagePickerCamera.launch(intent);
                     }
-                }
-            });
+                    if (item.getItemId() == R.id.action_gallery) {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        ImagePickerGallery.launch(intent);
+                    }
+                    return true;
+                });
+                popupMenu.show();
+            }
+        });
+    }
 }

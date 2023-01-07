@@ -12,7 +12,7 @@ public class Person {
 
     private String email;
 
-    private ArrayList<String> shoppingList;
+    private ArrayList<String> shopping;
 
     private HashMap<String, Double> debts;
 
@@ -21,7 +21,7 @@ public class Person {
     public Person(String email) {
         this.email = email;
         this.name = "Unkown";
-        this.shoppingList = new ArrayList<>();
+        this.shopping= new ArrayList<>();
         this.debts = new HashMap<>();
     }
 
@@ -57,12 +57,12 @@ public class Person {
         this.email = email;
     }
 
-    public ArrayList<String> getShoppingList() {
-        return shoppingList;
+    public ArrayList<String> getShopping() {
+        return shopping;
     }
 
-    public void setShoppingList(ArrayList<String> shoppingList) {
-        this.shoppingList = shoppingList;
+    public void setShopping(ArrayList<String> shoppingList) {
+        this.shopping= shoppingList;
     }
 
     public void setDebts(HashMap<String, Double> debts) {
@@ -71,5 +71,17 @@ public class Person {
 
     public HashMap<String, Double> getDebts() {
         return debts;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "picture='" + picture + '\'' +
+                ", key='" + key + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", shopping=" + shopping +
+                ", debts=" + debts +
+                '}';
     }
 }

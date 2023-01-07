@@ -1,5 +1,7 @@
 package com.example.app.ui.home.adapters;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,37 +10,44 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app.R;
 import com.example.app.model.Person;
+import com.example.app.ui.home.dialogs.DialogPayDebt;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.ViewHolder> {
-    private NavController navController;
+public class DashboardPersonListAdapter extends RecyclerView.Adapter<DashboardPersonListAdapter.ViewHolder> {
     private final ArrayList<Person> people;
+    private final ArrayList<Double> amount;
+    private FragmentManager fragmentManager;
 
-    public PersonListAdapter(ArrayList<Person> people, NavController navController) {
+    public DashboardPersonListAdapter(ArrayList<Person> people, ArrayList<Double> amount,
+                                      FragmentManager fragmentManager) {
         this.people = people;
-        this.navController = navController;
+        this.amount = amount;
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
     @Override
-    public PersonListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DashboardPersonListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.person_card, parent, false);
+                .inflate(R.layout.debt_list_card, parent, false);
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Person model = people.get(position);
+        Double money = amount.get(position);
         if (model.getPicture() != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference ref = storage.getReference().child(model.getPicture());
@@ -46,7 +55,17 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Vi
         }
         // Card Properties and Listeners
         holder.getName().setText(model.getName());
-        holder.getEmail().setText(model.getEmail());
+        if (money > 0) {
+            holder.getAmount().setText(" - " + money + "€");
+            holder.getAmount().setTextColor(Color.RED);
+            holder.getView().setOnClickListener(v -> {
+                DialogPayDebt fragment = new DialogPayDebt(model, money, position);
+                fragment.show(this.fragmentManager, "RemoveItemDialog");
+            });
+        } else {
+            holder.getAmount().setText(" + " + Math.abs(money) + "€");
+            holder.getAmount().setTextColor(Color.GREEN);
+        }
     }
 
     @Override
@@ -57,12 +76,12 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView picture;
         private final TextView name;
-        private final TextView email;
+        private final TextView amount;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             this.name = view.findViewById(R.id.person_name);
-            this.email = view.findViewById(R.id.person_email);
+            this.amount = view.findViewById(R.id.amount);
             this.picture = view.findViewById(R.id.profile_picture);
         }
 
@@ -74,9 +93,12 @@ public class PersonListAdapter extends RecyclerView.Adapter<PersonListAdapter.Vi
             return picture;
         }
 
-        public TextView getEmail() {
-            return email;
+        public TextView getAmount() {
+            return amount;
         }
 
+        public View getView() {
+            return this.itemView;
+        }
     }
 }

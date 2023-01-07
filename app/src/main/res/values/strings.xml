@@ -74,4 +74,8 @@
     <string name="check_item">Check Item</string>
     <string name="add_item_shopping_list">Add Item</string>
     <string name="item">Item</string>
+    <string name="here_are_your_debts">Here are your debts/profits</string>
+    <string name="welcome_back">Hello There!</string>
+    <string name="all_settled_up">All settled up!</string>
+    <string name="amount">Amount</string>
 </resources>
