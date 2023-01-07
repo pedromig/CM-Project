@@ -61,7 +61,6 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         PersonViewModel personViewModel = new ViewModelProvider(requireActivity()).get(PersonViewModel.class);
-                        System.out.println("here");
                         people = new ArrayList<>();
                         amounts = new ArrayList<>();
                         GenericTypeIndicator<HashMap<String, Double>> genericTypeIndicator = new GenericTypeIndicator<HashMap<String, Double>>() {

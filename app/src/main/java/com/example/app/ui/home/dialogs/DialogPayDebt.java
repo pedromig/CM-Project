@@ -14,13 +14,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.app.MainActivity;
 import com.example.app.R;
 import com.example.app.model.Person;
+import com.example.app.ui.dashboard.MQTT;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.nio.charset.StandardCharsets;
 
 public class DialogPayDebt extends DialogFragment {
 
     private final FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+
+    private final String TOPIC = "/cm/fridge-mates/" + auth.getUid();
+
     private final Person person;
     private final Double money;
     private int position;
@@ -57,6 +69,18 @@ public class DialogPayDebt extends DialogFragment {
         // Pay Debt
         Button btn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         btn.setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) requireActivity();
+            activity.getMqttService().subscribeToTopic(TOPIC);
+
+            // DEBUG FRIENDLY
+            //activity.getMqttService().subscribeToTopic("/cm/fridge-mates/" + person.getKey());
+
+            db.getReference().child("profiles").child(auth.getUid()).child("debts")
+                    .child(person.getKey()).setValue(0.0);
+
+            publishMessage(activity.getMqttService(),
+                    "Payment received from " + person.getName()
+                            + " (" + money + " €)", 2, TOPIC);
 
             Toast.makeText(requireActivity(), "Debt Payed! User Notified",
                     Toast.LENGTH_SHORT).show();
@@ -64,4 +88,13 @@ public class DialogPayDebt extends DialogFragment {
         });
         return dialog;
     }
+
+    public void publishMessage(MQTT client, String msg, int qos, String topic) {
+        byte[] encodedPayload;
+        encodedPayload = msg.getBytes(StandardCharsets.UTF_8);
+        MqttMessage message = new MqttMessage(encodedPayload);
+        message.setQos(qos);
+        client.mqttAndroidClient.publish(topic, message);
+    }
+
 }

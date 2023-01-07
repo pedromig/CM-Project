@@ -1,11 +1,14 @@
 package com.example.app;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.app.model.Person;
 import com.example.app.ui.dashboard.DashboardFragment;
+import com.example.app.ui.dashboard.MQTT;
 import com.example.app.ui.home.models.PersonViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -13,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,8 +40,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase db;
+
+    private String CHANNEL_ID = "FridgeMates";
+    private MQTT mqttService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
         // Setup Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         this.setSupportActionBar(toolbar);
+
+        this.mqttService = new MQTT(getApplicationContext(), "FridgeMates", "lol");
+        this.setupMqttService();
+
+        this.createNotificationsChannel();
 
         // Setup App Bar
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -82,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public MQTT getMqttService() {
+        return mqttService;
+    }
 
     private void setupFirebaseProfilesListener() {
         // Setup Firebase Actions on Incoming Changes To Profiles
@@ -135,4 +155,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void setupMqttService() {
+        this.getMqttService().setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                System.err.println("CONNECTED: " + serverURI);
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+                System.err.println("CONNECTION LOST!");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                System.out.println(message.toString());
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(),
+                        CHANNEL_ID)
+                        .setSmallIcon(R.drawable.logo)
+                        .setContentTitle("Payment Received!")
+                        .setContentText(message.toString())
+                        .setPriority(NotificationCompat.FLAG_ONLY_ALERT_ONCE);
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                notificationManager.notify(1, builder.build());
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                System.out.println("DELIVERED!");
+            }
+        });
+        mqttService.connect();
+    }
+
+    private void createNotificationsChannel() {
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "ThirdChallenge", importance);
+        channel.setDescription("Fridge Mates Notifications");
+        NotificationManager notificationManager = this.getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
 }

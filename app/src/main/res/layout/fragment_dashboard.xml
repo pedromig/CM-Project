@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:text="@string/welcome_back"
+        android:textColor="@color/black"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
         android:layout_marginBottom="32dp"
         android:text="@string/here_are_your_debts"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +72,8 @@
             android:text="@string/all_settled_up"
             app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
             app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="20sp"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/scrollView2" />
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
-;import com.example.app.R;
+;import com.example.app.MainActivity;
+import com.example.app.R;
 import com.example.app.model.Person;
 import com.example.app.ui.home.models.HomeViewModel;
 import com.example.app.ui.home.models.ItemViewModel;
@@ -105,6 +106,9 @@ public class ProfileFragment extends Fragment {
             hvm.getResidences().clear();
             ivm.getItems().clear();
             ivm.getOwners().clear();
+
+            MainActivity activity = (MainActivity) requireActivity();
+            activity.getMqttService().unsubscribeTopic("/cm/fridge-mates/" + auth.getUid());
 
             // Navigate to login fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
